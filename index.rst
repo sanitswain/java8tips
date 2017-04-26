@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    quickintro
+   method_as_value
 
 Indices and tables
 ==================

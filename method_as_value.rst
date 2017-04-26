@@ -1,0 +1,3 @@
+Method as parameter
+===================
+fdsfdsaf
