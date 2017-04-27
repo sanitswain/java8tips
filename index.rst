@@ -12,7 +12,7 @@ Contents:
    :maxdepth: 2
 
    quickintro
-   behaviour_param
+   behaviorparamiterization
 
 Indices and tables
 ==================
