@@ -1,2 +1,2 @@
 # Java-8-tips
-A beginer guide to make handds dirty with Java 8 features
+A beginer guide to make hands dirty with Java 8 features
