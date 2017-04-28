@@ -1,0 +1,27 @@
+Lambdas
+=======
+In previous chapter we were expecting the ``GroupByExperience`` class should be removed and only the method body should be given to our *group()* function, Lambda are the concise way of writing them. It can be considered as anonymous function which doesn't have any function name but has list of parameters, function body, returns result and even throws exceptions. So let's rewrite the ``GroupByExperience``.
+
+.. code:: java
+
+	(Employee e) -> { return e.yearsOfExpr >= 7 ? "Expert" : e.yearsOfExpr >= 3 ? "Intermediet" : "Fresher"; }
+
+Basically *Lambda* has 3 parts.
+
+#. **A list of parameters** : In above example "Employee e"
+#. **Function body**		: The behavior
+#. **An arrow**				: It's a separator between parameter list and your function body
+
+.. note:: Lambda syntax follows some of the below rules.
+
+	* Parameter types are optional, but if you mention them then brackets are mandatory.
+	* If you have single parameter then both parameter type and brackets are optional.
+	* If you have multiple parameters, then brackets require.
+	* For multiple statement function body, courly braces required.
+	* If courly braces present then ``return`` keyward is mandated incse your behavior return something.
+
+	
+Let's apply above rules to our ``GroupByExperience`` lambda expression. It can be writtten as following ways.
+
+* e -> { return e.yearsOfExpr >= 7 ? "Expert" : e.yearsOfExpr >= 3 ? "Intermediet" : "Fresher"; }
+* e -> e.yearsOfExpr >= 7 ? "Expert" : e.yearsOfExpr >= 3 ? "Intermediet" : "Fresher"

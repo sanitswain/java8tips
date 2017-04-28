@@ -13,6 +13,7 @@ Contents:
 
    quickintro
    behaviorparamiterization
+   lambdas
 
 Indices and tables
 ==================
