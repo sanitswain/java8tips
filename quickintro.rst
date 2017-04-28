@@ -46,7 +46,10 @@ I am excited to walk you through other features in detail and hope you are too, 
 
 
 The topic we are going to cover are:
-- What is a functional programming?
-- How Stream works?
-- How to use paralle streams?
-- java.util.time package
+
+* What is a functional programming and Functinal interface?
+* java.util.stream.Stream package and behaviors?
+* Collector and Collectors
+* Forkjoin Pool and Spliterators
+* How to use paralle streams?
+* java.util.time package
