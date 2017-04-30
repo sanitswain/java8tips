@@ -1,6 +1,6 @@
 Behavior Parameterization
 ==========================
-Generally speaking behavior parameterization is the ability of a method to receive multiple different behavior as its parameter and use them internally to accomplish the task. It let you to make your code more adaptive to changing requirements and saves the engineering effort from writing similar piece of code here and there. 
+Technically speaking behavior parameterization is the ability of a method to receive multiple different behavior as its parameter and use them internally to accomplish the task. It let you to make your code more adaptive to changing requirements and saves the engineering effort from writing similar piece of code here and there. 
 
 If you have come across some of the behavioral design patterns like *Strategy Pattern* then you know we create set of similar algorithms and choose required one at run time to deal with a certain problem scenario. This type of techniques facilitate to add new behaviors in future. Let's look into a problem statement to understand better.
 
@@ -56,6 +56,6 @@ Based on our purpose we are passing the required behaviors to the grouping funct
 		return map;
 	}
 
-Great... We have solved our problem. As and when new requirements comes we just need to implement some other implementation classes. But from begining we are talking, one of our main goal is to remove verbosity from the code as well as maintain the understandability. If you look into the ``GroupByExperience`` class, the behaviour is of one line but still complete class has been written. This can be avoided using Anonymous classes which some what reduces writting boilerplate code but not to the great extent.
+Great... We have solved the problem. As and when new requirements comes we just need to provide some other implementation classes. But from begining we are talking, one of our main objective is to remove verbosity from the code as well as maintain the understandability. If you look into the ``GroupByExperience`` class, the behaviour is of one liner but still complete class has been written. Another way can be writting Anonymous classes which some what reduces these boilerplate codes but not to the great extent.
 
 Just think, if the interface ``Groupable`` was given by java SDK itself and we were written only the method and passed to the grouping function, then the code will be clearer and more flexible. Some of the interpreted langauges like python, JavaScript etc support passing of method as parameter to the calling function, similarly Java 8 has also started supporting it with the help of *Functional Interfaces* and *Lambdas*. Most of us already aware of Lambdas which is a very well-known concept that exist from the begining of languages like python. Don't worry about them now, we will slowly have deep drive into it. 

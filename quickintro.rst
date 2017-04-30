@@ -51,5 +51,5 @@ The topic we are going to cover are:
 * java.util.stream.Stream package and behaviors?
 * Collector and Collectors
 * Forkjoin Pool and Spliterators
-* How to use paralle streams?
+* How to use parallel streams?
 * java.util.time package
