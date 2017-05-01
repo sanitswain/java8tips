@@ -9,19 +9,18 @@ In previous chapter we thought of removing ``GroupByExperience`` class, only the
 Basically *Lambda* has 3 parts.
 
 #. **A list of parameters** : In above example "Employee e"
-#. **Function body**		: The behavior
-#. **An arrow**				: It's a separator between parameter list and function body
+#. **Function body**		: The behavior (right hand side of arrow)
+#. **An arrow**				: Separator between parameter list and function body
 
 .. note:: Lambda syntax follows some of the below rules.
 
-	* Parameter types are optional, but if you mention them then parenthesis are mandatory.
+	* Parameter types are optional.
 	* If you have single parameter then both parameter type and parenthesis are optional.
-	* If you have multiple parameters, then parenthesis require.
-	* For multiple statement function body, courly braces required.
-	* If courly braces present then ``return`` keyward is mandated if your behavior return something.
-	* The return value will be supressed if target method doesn't return anything.
+	* If you have multiple parameters, then they should be enclosed with in parenthesis.
+	* For multiple statements in function body should be enclosed with in courly braces.
+	* If courly braces present then ``return`` keyward is mandaroty in case your behavior returns something.
 
-With applying above rules our ``GroupByExperience`` class can also be writtten in following ways.
+With applying above rules our ``GroupByExperience`` class can be writtten in following ways.
 
 .. code:: java
 
@@ -70,7 +69,7 @@ But in JDK 1.7 right hand side generic type become optional by changing it to th
 	2. List<String> list = new ArrayList<>();
 	   list.addAll(Arrays.asList());
 
-If you compile above code in JDK 1.7, then the statement-1 will be compiled successfully but not statement-2 and itt will generate "``The method addAll(Collection<? extends String>) in the type List<String> is not applicable for the arguments (List<Object>)``" error message. So what really happened in statement-2 where as both of the statements looks similar. Just look into the signature of above used methods.
+If you compile above code in JDK 1.7, then the statement-1 will be compiled successfully but not statement-2 and it will generate "``The method addAll(Collection<? extends String>) in the type List<String> is not applicable for the arguments (List<Object>)``" error message. So what really happened in statement-2 where as both of the statements looks similar. Just look into the signature of above used methods.
 
 +---------------------------------------------------+ 
 |     Method Signatures                             | 
@@ -86,16 +85,16 @@ The type of lambda is deduced from the context where it is used. If we take our 
 
 .. code:: java
 
-	For run() method fully described lambda expression is
-	() -> {
-		I love Lambdas".length();
-	}
+    For run() method fully described lambda expression is
+    () -> {
+        I love Lambdas".length();
+    }
 
 	
-	and for call() it is
-	() -> {
-		return I love Lambdas".length();
-	}
+    and for call() it is
+    () -> {
+        return I love Lambdas".length();
+    }
 
 Java compiler always looks for a matching functional interface to associate with the lambda expression from it's surrounding context or target type. Compiler expects you to use lambda expresssion in following places such that it can determine the target type.
 
@@ -110,28 +109,28 @@ For method or constructor arguments, the compiler determines the target type wit
 
 .. code:: java
 
-	public static void main(String[] args) throws Exception {
-		execute(() -> "done");  // Line-1
-	}
+    public static void main(String[] args) throws Exception {
+        execute(() -> "done");  // Line-1
+    }
 
-	static void execute(Runnable runnable) {
-		System.out.println("Executing Runnable...");
-	}
+    static void execute(Runnable runnable) {
+        System.out.println("Executing Runnable...");
+    }
 
-	static void execute(Callable<String> callable) throws Exception {
-		System.out.println("Executing Callable...");
-		callable.call();
-	}
+    static void execute(Callable<String> callable) throws Exception {
+        System.out.println("Executing Callable...");
+        callable.call();
+    }
 
-	/* static void execute(PrivilegedAction<String> action) {
-		System.out.println("Executing Callable...");
-		action.run();
-	} */
+    /* static void execute(PrivilegedAction<String> action) {
+        System.out.println("Executing PrivilegedAction...");
+        action.run();
+    } */
 	
 	
-	Output: Executing Callable...
+    Output: Executing Callable...
 
-Here we have two overloaded methods: using Runnable and Callable. When you call the execute method with the mentioned lambda, the ``execute(Callable)`` will be called because call() method can return something. Now just uncomment `execute(PrivilegedAction)` method and try to reexecute and this time you will get compilation error: `The method execute(Callable<String>) is ambiguous for the type Lambdas`. The reason is both the last two execute() methods are capable to return and compiler found the ambiguous methods. So to resolve this you have to explicitly type cast the lambda expression as below.
+Here we have two overloaded methods: Runnable and Callable. When you call the execute method with the mentioned lambda, the ``execute(Callable)`` will be called because call() method can return something. Now just uncomment `execute(PrivilegedAction)` method and try to reexecute and this time you will get compilation error: `The method execute(Callable<String>) is ambiguous for the type Lambdas`. The reason is both the last two execute() methods are capable to return and compiler found the ambiguous methods. So to resolve this you have to explicitly type cast the lambda expression as below.
 
 	`execute((Callable<String>) (() -> "done"));`
 
@@ -170,7 +169,7 @@ Lambda has some restrictions:
 .. code:: java
 
     public class LambdaFeatures {
-	    int y = 50;
+        int y = 50;
 		
         public static void main(String[] args) throws Exception {
             int x = 50;
@@ -186,8 +185,8 @@ Lambda has some restrictions:
             };
 
             t.start();
-		
-		    x++;
+			
+            x++;
             System.out.println("main end");
         }
     }
