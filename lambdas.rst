@@ -1,6 +1,6 @@
 Lambdas
 =======
-In previous chapter we were expecting the ``GroupByExperience`` class should be removed, only the method body should be given to our *group()* function and Lambdas are the best examples of implementing them. Lambdas give us the ability to encapsulate a single unit of code block and pass on to another code. It can also be considered as anonymous function which doesn't have any function name but has list of parameters, function body, returns result and even throws exceptions. Below is the code statement if we convert our ``GroupByExperience`` class to a lambda expression.
+In previous chapter we thought of removing ``GroupByExperience`` class, only the method body should be given to our *group()* function and Lambdas are the best examples of implementing them. Lambdas give us the ability to encapsulate a single unit of code block and pass on to another code. It can also be considered as anonymous function which doesn't have any function name but has list of parameters, function body, returns result and even throws exceptions. Below is the code statement if we convert our ``GroupByExperience`` class to a lambda expression.
 
 .. code:: java
 
@@ -136,12 +136,71 @@ Here we have two overloaded methods: using Runnable and Callable. When you call 
 	`execute((Callable<String>) (() -> "done"));`
 
 
-Method Reference
-^^^^^^^^^^^^^^^^
+Accessing outer scope variables
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Some of the rules applicable for anonymous classes are also applicable to Lambdas:
+	- Lambda has access to members of its enclosing scope. (see line-1)
+	- Like nested class or anonymous class, it can also shadows any other declarations in the enlosing scope that is of same name. (see line-2)
 
+.. code:: java
 
+    public class LambdaFeatures {
+        private int x = 10;
+
+        public void example() {
+            Consumer<String> funcInterface = str -> {
+                System.out.println("x= " + x);  // Line-1
+
+                int x = 50;                     // Line-2
+                System.out.println("x= " + x);
+            };
+        }
+    }
+	
+    Output: x= 10
+            x= 50
+	
+Restrictions in Lambdas
+^^^^^^^^^^^^^^^^^^^^^^^
+Lambda has some restrictions:
+
+	- You can't declare any static or non-static initializers.
+	- It cann't access local variables in its enclosing scope that are not defined final or effectively final. This restriction exists with anonymous class also. Let's discuss why is this limitation with following code snippet.
+
+.. code:: java
+
+    public class LambdaFeatures {
+	    int y = 50;
+		
+        public static void main(String[] args) throws Exception {
+            int x = 50;
+
+            Thread tt = new Thread() {
+                public void run() {
+                    System.out.println("MyThread start.");
+
+                    Thread.sleep(1000L);
+					
+                    System.out.println("MyThread end. x=" + x);
+                }
+            };
+
+            t.start();
+		
+		    x++;
+            System.out.println("main end");
+        }
+    }
+
+Local variables stored in the stack where as instance variables stored in heap. In the above code snippet main thread declares variable "x" and also creates a Thread which is trying to use this x variable. As we know local variables will be stored in the local stack (here stack of main) and when thread "tt" will be created it will executed separate to main thread. There might be chances that main will be completed first and the stack will be released before thread tt trying to use it. So if variable is declared final, them lambda will a copy of it and use whenever require.
 
 Where to use Lambdas
 ^^^^^^^^^^^^^^^^^^^^
+We have discussed enough on lambdas and anonybmous classes. Let's discuss the scenarios where should we use them.
 
-.. note:: Parameters used in lambda expression should be final or effectively final.
+	- **Anonymous class:** Use it whenever you want to declare some additional fields or methods which lambda cann't do.
+	
+	- **Lambda:** 
+		* Use it if you want to encapsulate a single unit of behavior and pass to some other code. For example: performing certain operation on each element of collection.
+		
+		* Use it if you need a simple instance of a functional interface and none of the preceding criteria apply (for example, you do not need a constructor, a named type, fields, or additional methods).

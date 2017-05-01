@@ -14,6 +14,7 @@ Contents:
    quickintro
    behaviorparamiterization
    lambdas
+   funcinterfaces
 
 
 Indices and tables
