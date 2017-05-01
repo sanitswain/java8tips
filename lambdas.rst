@@ -18,7 +18,7 @@ Basically *Lambda* has 3 parts.
 	* If you have single parameter then both parameter type and parenthesis are optional.
 	* If you have multiple parameters, then they should be enclosed with in parenthesis.
 	* For multiple statements in function body should be enclosed with in courly braces.
-	* If courly braces present then ``return`` keyward is mandaroty in case your behavior returns something.
+	* If lambda body exnclosed inside courly braces then ``return`` keyward is required in case your behavior returns value.
 
 With applying above rules our ``GroupByExperience`` class can be writtten in following ways.
 
