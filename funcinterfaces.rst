@@ -95,15 +95,15 @@ It has couple of default methods which you can use it:
      - Description
      - Example
 
-   * - `and(Predicate<? super T> other) <http://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html#and-java.util.function.Predicate->`_ 
+   * - and(Predicate<? super T> other) 
      - Returns a composite predicate that represents logical AND of two predicates (P1 AND P2)
      - Predicate<Integer> positiveOdd = positiveNums.and(oddNums)
 
-   * - `or(Predicate<? super T> other) <http://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html#or-java.util.function.Predicate->`_
+   * - or(Predicate<? super T> other)
      - Returns a composite predicate that represents logical OR of two predicates (P1 OR P2)
      - Predicate<Integer> positiveOrOdd = positiveNums.or(oddNums)
 
-   * - `negate() <http://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html#negate-->`_
+   * - negate()
      - Returns a predicate that represents the logical negation of this predicate.
      - Predicate<Integer> negative = positiveNums.negate();
 	
@@ -111,11 +111,142 @@ It has couple of default methods which you can use it:
 
 Consumer<T>
 -----------
+`java.util.function.Consumer <http://docs.oracle.com/javase/8/docs/api/java/util/function/Consumer.html>`_ accepts an argument and returns no result.
+
++----------------------------------------+ 
+|     Class definition                   | 
++========================================+ 
+|  public interface Consumer<T> {        |
+|                                        |
+|    void accept(T t);                   |
+|                                        |
+|  }                                     |
++----------------------------------------+
+
+| Simple usecase can be persisting elements of a collection into DB or serializing them or printing on the console.
+
+.. code:: java
+
+    public class ConsumerTest {
+	
+        public static void main(String[] args) {
+            Consumer<Employee> printOnConsole = (e -> System.out.print(e));
+            Consumer<Employee> storeInDB = (e -> DaoUtil.save(e));
+			
+			forEach(empList, printOnConsole);
+			forEach(empList, storeInDB);
+			forEach(empList, printOnConsole.andThen(storeInDB));
+        }
+
+        static <T> void forEach(List<T> list, Consumer<T> consumer) {
+            int nullCount = 0;
+            for (T t : list) {
+                if (t != null) {
+                    consumer.accept(t);
+                } else {
+                    nullCount++;
+                }
+            }
+            System.out.printf("%d null entries found in the list.\n", nullCount);
+        }
+    }
+
+Consumer has also one default method called `andThen(Consumer<? super T> after)` which returns a composite consumer where second consumer will be executed after execution of first one. If the first consumer throws any exception then the second consumer will not be executed because non of the functional interfaces provided by JDK handles any exception.
 
 
 Function<T,R>
 -------------
+`java.util.function.Function <http://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html>`_ accepts an argument and returns result.
 
++----------------------------------------+ 
+|     Class definition                   | 
++========================================+ 
+|  public interface Function<T, R> {     |
+|                                        |
+|    R apply(T t);                       |
+|                                        |
+|  }                                     |
++----------------------------------------+
 
+A usecase of `Function` can be extracting employee name from Employee class or deriving primary ids from given object etc.
+
+.. code:: java
+
+    public class FunctionTest {
+
+        public static void main(String[] args) {
+            Function<Employee, String> empPrimaryId = (emp -> emp.getEmployeeId());
+            Function<Department, String> deptPrimaryId = (dept -> dept.getLocationCode() + dept.getName());
+
+            map(employeeList, empPrimaryId);
+            map(deptList, deptPrimaryId);
+        }
+
+        static <T, R> Map<T, R> map(List<T> list, Function<T, R> func) {
+            Map<T, R> result = new HashMap<>();
+            for (T t : list) {
+                result.put(t, func.apply(t));
+            }
+            return result;
+        }
+    }
+
+It has couple of other methods:
+
+.. list-table::
+   :widths: 35 65
+   :header-rows: 1
+
+   * - Method
+     - Description
+
+   * - compose(Function<? super V, ? extends T> before) 
+     - Returns a composed function that first applies the before function to its input, and then applies this function to the result.
+
+   * - andThen(Function<? super R, ? extends V> after)
+     - Returns a composed function that first applies this function to its input, and then applies the after function to the result.
+
+   * - static <T> Function<T, T> identity()
+     - Returns a function that always returns its input argument.
+	
 Supplier<T>
 -----------
+`java.util.function.Supplier <http://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html>`_ doesn't accept any argument but returns a result.
+
++------------------------------------+ 
+|     Class definition               | 
++====================================+ 
+|  public interface Supplier<R> {    |
+|                                    |
+|    R get();                        |
+|                                    |
+|  }                                 |
++------------------------------------+
+
+A simple usecase of Supplier can be generating unique numbers using various algorithms.
+
+.. code:: java
+
+    public class SupplierTest {
+
+        public static void main(String[] args) {
+            Supplier<Long> randomId = () -> new Random().nextLong();
+            Supplier<UUID> uuid = () -> UUID.randomUUID();
+
+            Trade trade = new Trade();
+            populate(trade, randomId);
+            populate(trade, uuid);
+        }
+
+        static <R> void populate(Trade t, Supplier<R> supplier) {
+            t.tradeDate = new Date();
+            t.tradeId = (String) supplier.get();
+            t.location = "XYZ Hub";
+        }
+
+        static class Trade {
+            String tradeId;
+            Date tradeDate;
+            String location;
+        }
+    }
