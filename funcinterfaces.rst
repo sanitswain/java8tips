@@ -352,7 +352,7 @@ Java8 brings a bundle of primitive functional interfaces that deals with only th
 	- ToXXX and XXXToYYY are only applicable to them who returns something. Functional interfaces like `Predicate` doesn't have flavours of ToIntPredicate or LongToDoublePredicate because its return type is always boolean.
 
 
-Method References:
+Method References
 ------------------
 We have learnt enough to build lambda expressions to create anonymous methods. You might come across the scenarios where your lambda expression can contain just one line of code that calls an existing method. In such scenario lambda expressions will look like:
 
