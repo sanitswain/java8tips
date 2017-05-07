@@ -7,34 +7,34 @@ Suppose we are trying to find the highest salary paid in each technology of a XY
 	
 ::
 	
-	public Map<String, Double> method2(List<Employee> list) {
-		Map<String, List<Employee>> temp = new HashMap<>();
-		for (Employee e : list) {
-			temp.putIfAbsent(e.getTechnology(), new ArrayList<>());
-			temp.get(e.getTechnology()).add(e);
-		}
+    public Map<String, Double> method2(List<Employee> list) {
+        Map<String, List<Employee>> temp = new HashMap<>();
+        for (Employee e : list) {
+            temp.putIfAbsent(e.getTechnology(), new ArrayList<>());
+            temp.get(e.getTechnology()).add(e);
+        }
 
-		Map<String, Double> map = new HashMap<>();
-		for (Entry<String, List<Employee>> ent : temp.entrySet()) {
-			double max = 0;
-			for (Employee e2 : ent.getValue()) {
-				max = Double.max(max, e2.getSalary());
-			}
-			map.put(ent.getKey(), max);
-		}
-		return map;
-	}
+        Map<String, Double> map = new HashMap<>();
+        for (Entry<String, List<Employee>> ent : temp.entrySet()) {
+            double max = 0;
+            for (Employee e2 : ent.getValue()) {
+                max = Double.max(max, e2.getSalary());
+            }
+            map.put(ent.getKey(), max);
+        }
+        return map;
+    }
 
 	
 Let's rewrite this code snippet in Java 8 way.
 
 .. code:: java
 
-	Map<String, Double> map = list.stream().collect(
-                groupingBy(Employee::getTechnology,                            -- Grouping on technology
-                    mapping(Employee::getSalary,                               -- Scale to salary from Employee object
-                        collectingAndThen(maxBy(Comparator.naturalOrder()),    -- Find the maximum among them
-                            Optional::get))));
+    Map<String, Double> map = list.stream().collect(
+            groupingBy(Employee::getTechnology,                            -- Grouping on technology
+                mapping(Employee::getSalary,                               -- Scale to salary from Employee object
+                    collectingAndThen(maxBy(Comparator.naturalOrder()),    -- Find the maximum among them
+                        Optional::get))));
 
 Isn't it great. I just said group on technologies then extract salary from the employee object and finally get me the highest value from each group. Here my code is objective oriented and easy understandable. If you look into the first approch we are using a temporary intermediate map just to keep grouped data and then process it to find the desired result. Every time you implement this kind of funtionality, you will write these boilerplate codes, but now java does these extra coding and returns result to you. You still might be thinking older approach is good because of the confusions and we are not ready to think in functional programming way.
 
