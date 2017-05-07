@@ -154,8 +154,8 @@ Consumer<T>
 Consumer has also one default method called `andThen(Consumer<? super T> after)` which returns a composite consumer where second consumer will be executed after execution of first one. If the first consumer throws any exception then the second consumer will not be executed because non of the functional interfaces provided by JDK handles any exception.
 
 
-Function<T,R>
--------------
+Function<T, R>
+--------------
 `java.util.function.Function <http://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html>`_ accepts an argument and returns result.
 
 +----------------------------------------+ 
@@ -336,7 +336,7 @@ We visited couple of functional interfaces which are defined as generic types. G
     reduce1() execution time: 0.006 secs
     reduce2() execution time: 0.002 secs
 
-In the above example `reduce` methods calculating sum of a given array of numbers and output section shows their running times. ``reduce2()`` is 3 times faster than ``reduce1()`` method because it uses ``IntBinaryOperator`` which avoids unnecessary boxing and unboxing tasks.
+In the above example `reduce` methods calculating sum of a given array of numbers and output section shows their running times. ``reduce2()`` is 3 times faster than ``reduce1()`` method because it uses ``IntBinaryOperator`` which avoids unnecessary boxing and unboxing operations.
 
 Java8 brings a bundle of primitive functional interfaces that deals with only three primitive types i.e. int, long and double. Basically it follows a naming conventions to identify as them:
 
@@ -354,3 +354,52 @@ Java8 brings a bundle of primitive functional interfaces that deals with only th
 
 Method References:
 ------------------
+We have learnt enough to build lambda expressions to create anonymous methods. You might come across the scenarios where your lambda expression can contain just one line of code that calls an existing method. In such scenario lambda expressions will look like:
+
+- Function<String, Integer> func = str -> str.length();
+- Supplier<Address> sup = () -> emp.getAddress();
+
+Though java8 talks about removing boilerplace codes, there is an efficient way called `method references` to build these lambdas which will be more clear and readable. If we rewrite above two lambda expressions using method reference technique then the representations will be ``String::length`` and ``emp::getAddress``. These representation clearly says we are trying to call length method of a string in first case and getAddess in the second.
+
+**Syntax**: <target reference>::<method name>
+
+Above is the syntax for creating method references where the target reference will be placed before the delimeter :: and then the name of method. There are three kinds of method references exists.
+
+- Reference to static method:
+    ``Consumer<List<Integer>> c = Collections::sort;`` is an example of method reference for static methods. Compiler will automatically consider it as ``(list) -> Collections.sort(list)``. Here the target type will be the class name that contains the static method.
+
+- Reference to an instance method of a particular object:
+	If you have an object reference then you can call its method like ``list::add`` which is very similar to ``(list, ele) -> list.add(ele)``. Here the target type will be object reference.
+
+- Reference to an instance method of an arbitrary object of a particular type:
+	This type of method references are little confusing. If you look into the previous example ``String::length``, usually length() method is called on a string reference but we have written class name "String" as like it is a static method. When we use method references they also go through similar checks as lambda expression goes. Compiler will try to match the method reference with any of functional descriptor syntax and if matches then passes on.
+
+Below table shows some of method references and equal lambda expressions.
+
+.. list-table::
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Method Reference
+     - Lambda Expression
+
+   * - Integer::parseInt 
+     - ToIntFunction<String> f = (str) -> Integer.parseInt(str)
+	 
+   * - Collections::sort
+     - BiFunction<List, Comparator<Trade>> f = (list, comp) -> Collections.sort(list, comp)
+
+   * - String::toUpperCase
+     - UnaryOperator<String> f = (str) -> str.toUpperCase()
+
+   * - UUID::randomUUID
+     - Supplier<UUID> f = () -> UUID.randomUUID()
+	 
+   * - empDao::getEmployee
+     - Function<String, Employee> f = (empid) -> empDao.getEmployee(empid)
+
+
+.. important::  There are two things you should be aware of before using method references.
+
+	#. Method reference should not contain paranthesis after method name otherwise it will represent a method invocation that wwill lead to compilation error.
+	#. It is difficult to wrte meethod signature until and unless you know the signature of the method for which writing method reference.
