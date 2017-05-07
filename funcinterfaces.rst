@@ -294,8 +294,8 @@ There is another variant of functional interfaces that starts with **Bi**: BiCon
 
 .. hint:: Suppose you want to replace a CharSequence with another CharSequence within a string. Here you have three input parameters: `original string, search string, replace string`. So you can write them in following ways.
 
-- Function<String[], String> f1 = arr -> arr[0].replaceAll(arr[1], arr[2]);
-- BiFunction<String, String[], String> f2 = (str, arr) -> str.replaceAll(arr[0], arr[1]);
+	- Function<String[], String> f1 = arr -> arr[0].replaceAll(arr[1], arr[2]);
+	- BiFunction<String, String[], String> f2 = (str, arr) -> str.replaceAll(arr[0], arr[1]);
 
 
 Primitive Functional Interfaces
