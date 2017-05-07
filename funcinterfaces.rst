@@ -381,7 +381,7 @@ Below table shows some of method references and equal lambda expressions.
    :header-rows: 1
 
    * - Method Reference
-     - Lambda Expression
+     - Equivalent lambda expression
 
    * - Integer::parseInt 
      - ToIntFunction<String> f = (str) -> Integer.parseInt(str)
@@ -399,7 +399,7 @@ Below table shows some of method references and equal lambda expressions.
      - Function<String, Employee> f = (empid) -> empDao.getEmployee(empid)
 
 
-.. important::  There are two things you should be aware of before using method references.
+.. important::  There are two things you should be aware of before writing method references.
 
-	#. Method reference should not contain paranthesis after method name otherwise it will represent a method invocation that wwill lead to compilation error.
+	#. Method reference should not contain paranthesis after method name otherwise it will represent a method invocation that will lead to compilation error.
 	#. It is difficult to wrte meethod signature until and unless you know the signature of the method for which writing method reference.
