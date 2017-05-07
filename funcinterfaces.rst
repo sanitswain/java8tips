@@ -7,7 +7,7 @@ The `java.util.function <http://docs.oracle.com/javase/8/docs/api/java/util/func
 The interfaces defined in the this package are annotated with `FunctionalInterface <http://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html>`_. This annotation is not the requirement for the java compiler to determine the interface is an `functional interface` but it helps the compiler to identify the accidental violation of the design intent. Basically I would say this annotation will be very much useful for us while creating our custom functional interfaces. 
 
 
-Functional Interface rules
+@FunctionalInterface rules
 --------------------------
 As discussed `@FunctionalInterface <http://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html>`_ is a runtime annotation that is used to verify the interface follows all of the rules that can make this interface as `functional interface`. Below are some of the rules from them:
 
@@ -15,7 +15,7 @@ As discussed `@FunctionalInterface <http://docs.oracle.com/javase/8/docs/api/jav
 	
     - It can have any number of `default methods <http://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html#isDefault-->`_  because they are not abstract and implementation is already provided by same.
 
-    - Interface can declares an abstract method overriding one of the public method from ``java.lang.Object``, that still can be considered as `functional interface`. The reason is any implementation class for this interface will have implementation for this abstract method either from super class (bare minimum java.lang.Object) class or defined by implementation class it self.
+    - Interface can declares an abstract method overriding one of the public method from ``java.lang.Object``, that still can be considered as `functional interface`. The reason is any implementation class to this interface will have implementation for this abstract method either from super class (bare minimum java.lang.Object) class or defined by implementation class it self. In the below example ``toString()`` method declared as abstract which will be implemented in its concrete implementation class or at last derived from ``java.lang.Object`` class.
 
 Below code snippet is a simple example of functinal interface.
 
@@ -178,11 +178,11 @@ A usecase of `Function` can be extracting employee name from Employee class or d
             Function<Employee, String> empPrimaryId = (emp -> emp.getEmployeeId());
             Function<Department, String> deptPrimaryId = (dept -> dept.getLocationCode() + dept.getName());
 
-            map(employeeList, empPrimaryId);
-            map(deptList, deptPrimaryId);
+            toMap(employeeList, empPrimaryId);
+            toMap(deptList, deptPrimaryId);
         }
 
-        static <T, R> Map<T, R> map(List<T> list, Function<T, R> func) {
+        static <T, R> Map<T, R> toMap(List<T> list, Function<T, R> func) {
             Map<T, R> result = new HashMap<>();
             for (T t : list) {
                 result.put(t, func.apply(t));
@@ -191,7 +191,7 @@ A usecase of `Function` can be extracting employee name from Employee class or d
         }
     }
 
-It has couple of other methods:
+`Function` has couple of default and static methods:
 
 .. list-table::
    :widths: 35 65
@@ -207,7 +207,45 @@ It has couple of other methods:
      - Returns a composed function that first applies this function to its input, and then applies the after function to the result.
 
    * - static <T> Function<T, T> identity()
-     - Returns a function that always returns its input argument.
+     - Returns a function that always returns its input argument. Basically it is a helper method that used in Collector implementation that we will look later.
+
+Below code snippet shows an example of composed function ``andThen()``.
+
+.. code:: java
+
+    public class ComposedFunctionExample {
+
+        /** 
+         *  Find the Addrees of given employee from database and return pincode
+         */
+        public static void main(String[] args) {
+            Function<String, Address> first = empid -> EmployeeService.getEmployeesData().get(empid);
+            Function<Address, Integer> second = addr -> addr.pincode;
+            extract("E101", first, second);
+        }
+
+        static <T, R, U> U extract(T input, Function<T, R> first, Function<R, U> second) {
+            return first.andThen(second).apply(input);
+        }
+    }
+	
+It has two subclasses whose type of operand and return types are of same type.
+	
+- **UnaryOperator<T>:**
+	This represents an operation on a single operand that produces a result of the same type as its operand. The simple usecase could be calculating square of a number.
+
+	*Function descriptor signature:* ``T apply(T t)``
+	
+	*Example:* UnaryOperator<Integer> square = (Integer in) -> in * in;
+
+
+- **BinaryOperator<T>:**
+	This represents an operation upon two operands of the same type, producing a result of the same type as the operands. The simple usecase could be calculating sum of two numbers.
+
+	*Function descriptor signature:* ``T apply(T t1, T t2)``
+	
+	*Example:* BinaryOperator<Integer> sum = (i1, i2) -> i1 + i2;
+
 	
 Supplier<T>
 -----------
@@ -250,3 +288,69 @@ A simple usecase of Supplier can be generating unique numbers using various algo
             String location;
         }
     }
+
+
+There is another variant of functional interfaces that starts with **Bi**: BiConsumer, BiFunction, BiPredicate etc which accept two input arguments of same or different reference types. These are helper interfaces used when working with tasks expecting two input arguments as an example ``list.add(element)``. There is no functional interfaces which accepts more than two input parameters, but still you can deal with such problems by wrapping all inputs to a single container.
+
+.. hint:: Suppose you want to replace a CharSequence with another CharSequence within a string. Here you have three input parameters: `original string, search string, replace string`. So you can write them in following ways.
+
+- Function<String[], String> f1 = arr -> arr[0].replaceAll(arr[1], arr[2]);
+- BiFunction<String, String[], String> f2 = (str, arr) -> str.replaceAll(arr[0], arr[1]);
+
+
+Primitive Functional Interfaces
+-------------------------------
+We visited couple of functional interfaces which are defined as generic types. Generic types are always reference type which has extra cost associated with it called `Boxing` and `Unboxing`. Reference types are generally a wrapper around primitive types and stored in heap. Therefore, takes extra space. You might not bother about more space taking though cost of hardware is decreased a lot in last decade, but what about the execution time. When you operate on primitive types, your input and expected return type both are primitives but internally due to generics it boxes your input, does the operation then unboxes the result and returns it. So here the boxing and unboxing is an extra effort that takes phenomenon time which is useless for your purpose. Let's see an example.
+
+.. code:: java
+
+    public class PrimitiveFunc {
+
+        public static void main(String[] args) {
+            int[] arr = IntStream.range(1, 50000).toArray();
+            BinaryOperator<Integer> f1 = (i1, i2) -> i1 + i2;
+    	    IntBinaryOperator f2 = (i1, i2) -> i1 + i2;
+
+    	    RunningTime.calculate((Consumer<Void>) v -> reduce1(arr, f1));
+    	    RunningTime.calculate((Consumer<Void>) v -> reduce2(arr, f2));
+    	}
+
+    	static int reduce1(int[] arr, BinaryOperator<Integer> operator) {  
+    	    int result = arr[0];
+    	    for (int i = 1; i < arr.length; i++) {
+    	        result = operator.apply(result, arr[i]);  // Boxing and Unboxing here
+    	    }
+    	    return result;
+    	}
+
+        static int reduce2(int[] arr, IntBinaryOperator operator) {
+    	    int result = arr[0];
+    	    for (int i = 1; i < arr.length; i++) {
+    		    result = operator.applyAsInt(result, arr[i]);
+    	    }
+    	    return result;
+        }
+    }
+
+    Output:
+    reduce1() execution time: 0.006 secs
+    reduce2() execution time: 0.002 secs
+
+In the above example `reduce` methods calculating sum of a given array of numbers and output section shows their running times. ``reduce2()`` is 3 times faster than ``reduce1()`` method because it uses ``IntBinaryOperator`` which avoids unnecessary boxing and unboxing tasks.
+
+Java8 brings a bundle of primitive functional interfaces that deals with only three primitive types i.e. int, long and double. Basically it follows a naming conventions to identify as them:
+
+- **XXX:** Examples are IntPredicate, IntFunction, DoubleFunction, LongFunction etc. They accept primitive inputs and returns reference type results.
+- **ToXXX:** Examples are ToLongFunction, ToIntFunction etc. They accept reference type as input and returns primitive types.
+- **XXXToYYY:** IntToDoubleFunction, DoubleToLongFunction are some examples of this. They accept primitive type and also return primitive types.
+
+
+.. note:: There are little caveats in above rules:
+	
+	- In case of `Supplier`, XXX type returns primitive type because Supplier doesn't accept any input.
+	
+	- ToXXX and XXXToYYY are only applicable to them who returns something. Functional interfaces like `Predicate` doesn't have flavours of ToIntPredicate or LongToDoublePredicate because its return type is always boolean.
+
+
+Method References:
+------------------
