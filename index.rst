@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Java 8 tips's documentation!
-=======================================
+Welcome to Java 8 tutorial!
+===========================
 
 Contents:
 
@@ -15,6 +15,7 @@ Contents:
    behaviorparamiterization
    lambdas
    funcinterfaces
+   streams
 
 
 Indices and tables
