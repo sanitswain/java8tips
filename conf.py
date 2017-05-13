@@ -128,7 +128,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Java8tips.tex', u'Java 8 tips Documentation',
-     u'Sanit', 'manual'),
+     u'Sanit Swain', 'manual'),
 ]
 
 
