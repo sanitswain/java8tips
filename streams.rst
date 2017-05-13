@@ -71,8 +71,8 @@ Stream operations are broadly divided into intermediate and terminal operations 
 
 
 - **Intermediate Operations:** Intermediate operations helps the stream pipeline to build the execution strategy. These are lazy in nature, they don't execute until any terminal operations are invoked. They don't modify the original stream, everytime they return a new stream. Intermediate operations can again divided into stateless and stateful operations.
-	- `Stateless` operations such as filter, map are processed independently of operations on other elements
-	- `Stateful` operations such as sorted, distinct require to rememeber the result of operations on already seen elements to calculate the result for next element. They execute the entire input before producing the final result.
+    - `Stateless` operations such as filter, map are processed independently of operations on other elements
+    - `Stateful` operations such as sorted, distinct require to rememeber the result of operations on already seen elements to calculate the result for next element. They execute the entire input before producing the final result.
 
 - **Terminal Operation:** Terminal operation traverse the stream and execute the registered intermediate operationa to produce the result. They are eager in nature. After the terminal operation is performed, the stream pipeline is considered consumed, and can no longer be used.
 
