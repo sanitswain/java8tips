@@ -53,6 +53,6 @@ The topic we are going to cover are:
 * Collector and Collectors
 * Forkjoin Pool and Spliterators
 * How to use parallel streams?
-* Nunnable values with Optional
+* Nullable values with Optional
 * java.util.time package
 * Repeatable annotations

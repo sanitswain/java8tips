@@ -46,7 +46,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Java 8 tips'
-copyright = u'2017, Sanit'
+copyright = u'2017, Sanit Swain'
 author = u'Sanit'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -128,7 +128,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Java8tips.tex', u'Java 8 tips Documentation',
-     u'Sanit Swain', 'manual'),
+     u'Sanit', 'manual'),
 ]
 
 

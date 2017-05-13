@@ -65,8 +65,9 @@ Stream Operations
 -----------------
 Stream operations are broadly divided into intermediate and terminal operations that are combined to form pipeline. A stream pipeline consists of a source (such as a Collection, an array, a generator function, or an I/O channel); followed by zero or more intermediate operations such as Stream.filter or Stream.map; and a terminal operation such as Stream.forEach or Stream.reduce.
 
-.. figure:: images/stream_operations.png
+.. image:: stream_ops.png
    :align: center
+   :alt: Stream Operations
 
 
 **Intermediate Operations** - Intermediate operations helps the stream pipeline to build the execution strategy. These are lazy in nature, they don't execute until any terminal operations are invoked. They don't modify the original stream, everytime they return a new stream. Intermediate operations can again divided into stateless and stateful operations.
