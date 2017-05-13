@@ -70,10 +70,10 @@ Stream operations are broadly divided into intermediate and terminal operations 
    :alt: Stream Operations
 
 
-**Intermediate Operations** - Intermediate operations helps the stream pipeline to build the execution strategy. These are lazy in nature, they don't execute until any terminal operations are invoked. They don't modify the original stream, everytime they return a new stream. Intermediate operations can again divided into stateless and stateful operations.
+**Intermediate Operations:** Intermediate operations helps the stream pipeline to build the execution strategy. These are lazy in nature, they don't execute until any terminal operations are invoked. They don't modify the original stream, everytime they return a new stream. Intermediate operations can again divided into stateless and stateful operations.
 	- `Stateless` operations such as filter, map are processed independently of operations on other elements
 	- `Stateful` operations such as sorted, distinct require to rememeber the result of operations on already seen elements to calculate the result for next element. They execute the entire input before producing the final result.
 
-**Terminal Operation** - Terminal operation traverse the stream and execute the registered intermediate operationa to produce the result. They are eager in nature. After the terminal operation is performed, the stream pipeline is considered consumed, and can no longer be used.
+**Terminal Operation:** Terminal operation traverse the stream and execute the registered intermediate operationa to produce the result. They are eager in nature. After the terminal operation is performed, the stream pipeline is considered consumed, and can no longer be used.
 
 Streams are also generated from infinite set of elements. Some of the stream operations can be tagged as `short-circuting operations` which acts on these infinite stream or data. An intermediate operation said to be short-circuting if act on infinite stream should produce finite stream. As an example ``new Random().ints().limit(5)`` will return only 5 random numbers. A terminal operation is short-circuting if, when act on infinite set of input should produce result in finite time. As an example ``new Random().ints().filter(no -> no % 10 == 0).findAny()`` will return any one random number divisible by 10.
