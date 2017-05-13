@@ -49,9 +49,10 @@ I am excited to walk you through other features in detail and hope you are too, 
 The topic we are going to cover are:
 
 * What is a functional programming and Functinal interface?
-* java.util.stream.Stream package and its methods
+* java.util.stream.Stream and its operations
 * Collector and Collectors
 * Forkjoin Pool and Spliterators
 * How to use parallel streams?
+* Nunnable values with Optional
 * java.util.time package
 * Repeatable annotations

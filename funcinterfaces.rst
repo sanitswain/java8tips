@@ -387,7 +387,7 @@ Below table shows some of method references and equal lambda expressions.
      - ToIntFunction<String> f = (str) -> Integer.parseInt(str)
 	 
    * - Collections::sort
-     - BiFunction<List, Comparator<Trade>> f = (list, comp) -> Collections.sort(list, comp)
+     - BiConsumer<List, Comparator<Trade>> f = (list, comp) -> Collections.sort(list, comp)
 
    * - String::toUpperCase
      - UnaryOperator<String> f = (str) -> str.toUpperCase()
@@ -407,3 +407,45 @@ Below table shows some of method references and equal lambda expressions.
 
 Constructor as method reference
 -------------------------------
+As you know constructors are kind of special methods so method reference will also applied to constructors. Generally we use ``new`` operator to create an object invoking the constructor. So if you have zero argument constructor or parameterized constructor then you would have written lambdas as below.
+
+.. list-table::
+   :widths: 20 80
+   :header-rows: 1
+
+   * - Constructor Type
+     - Lambda Representation
+
+   * - Zero-argument 
+     - Supplier<Employee> s = () -> new Employee()
+	 
+   * - One-argument
+     - Function<String,Employee> f = (id) -> new Employee(id)
+
+   * - Two-argument
+     - BiFunction<String, String> f = (id, name) -> new Employee(id, name)
+
+Syntax of method reference for constructor is same as static method.
+
+**Syntax:** ClassName::new
+
+**Example:** Employee :: new, ArrayList :: new
+
+To understand it better we will see a usecase whose goal is to return a collection of unique ids but the collection type will be supplied as method argument.
+
+.. code:: java
+
+    public class ConstructorReference {
+    
+        public static void main(String[] args) {
+            ArrayList<SString> a = method(ArrayList::new);
+            TreeSet<String> t = method(TreeSet::new);
+        }
+
+        static Collection<String> method(Supplier<Collection<String>> container) {
+            Collection<String> c = container.get();
+            for (int i = 0; i < 5; i++)
+                c.add("ID:" + UUID.randomUUID().toString());
+            return c;
+        }
+    }
