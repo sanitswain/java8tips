@@ -67,3 +67,43 @@ A very common data processing idiom is to select information from a certain obje
     trades.stream().map(Trade::getTradeId).collect(Collectors.toList());
 	
     Output: [T101, T102, T103]
+	
+.. image:: _static/map.png
+   :align: center
+   :width: 600px
+   :height: 250px
+
+There are primitive variants of map methods ``mapToInt``, ``mapToDouble`` and ``mapToLong`` that we will see later. Stream interface has method ``flatMap`` which returns a stream consisting of the results of replacing each element of this stream with the contents of a mapped stream produced by applying the provided mapping function to each element. Sometime each element of a stream will produce individual streams that will be amalgamated into single stream and `flatMap` will be used there. It might be confusing you now so let see an example where you need to find distinct words contained in a file. Here we will use ``File.lines()`` which will return Stream<String> where each element will represent to a single line of the file.
+
+.. code:: java
+
+    List<String> words = 
+	    Files.lines(Paths.get("flatmap.txt"))     // Stream<String>
+            .map(line -> line.split(" "))         // Stream<String[]>
+            .map(Arrays::stream)                  // Stream<Stream<String>>
+            .distinct()
+            .collect(Collectors.toList());
+							
+    System.out.println(words);
+
+In the above code snippet each line will be splitted to array of words. Each array of words then passed to ``Arrays.stream()`` which will return Stream<String> for every line. ``map(Arrays::stream)`` will return ``Stream<Stream<String>>`` so our final output will be ``List<Stream<String>>`` where as our requirement is ``List<String>``.
+
+Now if you replace ``map(Arrays::stream)`` with ``flatMap(Arrays::stream)`` then all the elements from the each inner stream will be merged to a single outer stream.
+
+.. image:: _static/flatmap.png
+   :align: center
+   :width: 700px
+   :height: 350px
+
+.. code:: java
+
+    List<String> words = 
+	    Files.lines(Paths.get("flatmap.txt"))    // Stream<String>
+            .map(line -> line.split(" "))        // Stream<String[]>
+            .flatMap(Arrays::stream)             // Stream<String>
+            .distinct()
+            .collect(Collectors.toList());
+							
+    System.out.println(words);
+
+
