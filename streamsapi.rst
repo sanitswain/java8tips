@@ -107,3 +107,32 @@ Now if you replace ``map(Arrays::stream)`` with ``flatMap(Arrays::stream)`` then
     System.out.println(words);
 
 
+Matching
+--------
+Stream API provides ``anyMatch``, ``allMatch`` and ``noneMatch`` short-circuiting terminal operations which takes a Predicate as argument and returns a boolean result by applying the Predicate to the elements of the stream. Predicate might not be applied to all the elements if further execution is not require.
+
+- **anyMatch:** Returns true if any element found matching with the predicate.Predicate will not be applied to other elements if any matching found.
+- **allMatch:** Returns true if all elements are matching to the given predicate.
+- **noneMatch:** Returns true if none of the elements are matching to the predicate.
+
+.. code:: java
+
+    Stream.of(5, 10, 15, 20).anyMatch(i -> i % 10 == 0);
+    Stream.of(5, 10, 15, 20).allMatch(i -> i % 5 == 0);
+    Stream.of(5, 10, 15, 20).noneMatch(i -> i % 3 == 0);
+
+
+Finding element
+---------------
+Stream interface has ``findAny`` method which returns an arbitrary element from the stream. The behaviour of this operation is nondeterministic; it is free to select any element in the stream because in case of parallelization stream source will be divided into multiple chunks where any element can be returned. It has ``findFirst`` method also which returns the first element of the stream.
+
+:Signature: Optional<T> findFirst()
+
+            Optional<T> findAny()
+
+If you see the signature of above two methods, they return an Optinal object which is a wrapper describing absence or presence of the element because there might be a chance that resulted stream will be empty. Don't worry about Optional now, use get() or orElse() methods to get value fro the optional.
+
+.. code:: java
+
+    Stream.of(5, 10, 15).filter(i -> i % 20 == 0).findAny().orElse(0);
+    Stream.of(5, 10, 15).map(i -> i * 2).findFirst().get();
