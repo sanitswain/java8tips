@@ -79,8 +79,8 @@ There are primitive variants of map methods ``mapToInt``, ``mapToDouble`` and ``
 
     List<String> words = 
 	    Files.lines(Paths.get("flatmap.txt"))     // Stream<String>
-            .map(line -> line.split(" "))         // Stream<String[]>
-            .map(Arrays::stream)                  // Stream<Stream<String>>
+            .map(line -> line.split(" "))             // Stream<String[]>
+            .map(Arrays::stream)                      // Stream<Stream<String>>
             .distinct()
             .collect(Collectors.toList());
 							
@@ -99,8 +99,8 @@ Now if you replace ``map(Arrays::stream)`` with ``flatMap(Arrays::stream)`` then
 
     List<String> words = 
 	    Files.lines(Paths.get("flatmap.txt"))    // Stream<String>
-            .map(line -> line.split(" "))        // Stream<String[]>
-            .flatMap(Arrays::stream)             // Stream<String>
+            .map(line -> line.split(" "))            // Stream<String[]>
+            .flatMap(Arrays::stream)                 // Stream<String>
             .distinct()
             .collect(Collectors.toList());
 							
