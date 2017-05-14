@@ -12,10 +12,11 @@ Contents:
    :maxdepth: 2
 
    quickintro
-   behaviorparamiterization
+   behaviorparam
    lambdas
    funcinterfaces
    streams
+   streamsapi
 
 
 Indices and tables

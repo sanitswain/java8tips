@@ -1,8 +1,8 @@
 Quick Introduction
 ==================
-Java 8 released on March 18, 2014 and it became one of the favourite release for most of the java programmers. It has touched almost all part the java: memory management, runtime, syntax parser etc. It will improve your coding experience with different way of writing codes using features like declarative programming style, passing code as an argument etc. Every new releases has its own pros and cons and java 8 has too. When it comes to adopting a new language, the first thing we look for is benifits of it. To be honest some of Java 8 features are little confusing but ultimately they are of the most powerful. Soon we will have more clarity on them but prior to that let's see the main goal of it. Java 8 expects you to write codes that will be more precise, objective driven and highly readable.
+Java 8 released on March 18, 2014 and it became one of the favourite release for most of the java programmers. It has touched almost all part the java: memory management, runtime, syntax parser etc. It will improve your coding experience by writting different ways of codes using features like declarative programming, passing code as an argument, method reference etc. Every new releases has its own pros and cons and java 8 has too. When it comes to adopting a new language, the first thing we look for is benifits of it. To be honest some of Java 8 features are little confusing but ultimately they are of the most powerful features. Java 8 expects you to write codes that will be more precise, objective driven and highly readable. Soon we will have more clarity on them. 
 
-Passing methods as parameter removes verbosity from code and in fact increases reusability, Streams helps in writing SQL like syntaxes, parallelization that is almost free- speed of the execution with efficient use of modern computers having multicore processors, handling nullable values using Optional and many more. Initially stuffs will be little confusing but once you used to it, you will be reluctant to write code with out using it. Let's look into the below usecase and understand why java 8 is different then all the releases.
+Passing methods as parameter removes verbosity from the code and in fact increases reusability, Streams helps in writing SQL like syntaxes, parallelization that is almost free- speed of the execution with efficient use of modern computers having multicore processors, handling nullable values using Optional and many more. Initially stuffs will be little confusing but once you used to it, you will be reluctant to write code with out using it. Let's look into the below usecase and understand why java 8 is different then all the releases.
 
 Suppose we are trying to find the highest salary paid in each technology of a XYZ company. Before Java 8 the typical implementation could be
 	
@@ -46,7 +46,7 @@ I am excited to walk you through other features in detail and hope you are too, 
 
 
 
-The topic we are going to cover are:
+Table of content:
 
 * What is a functional programming and Functinal interface?
 * java.util.stream.Stream and its operations
