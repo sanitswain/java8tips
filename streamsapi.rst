@@ -10,9 +10,10 @@ Stream interface provides a method ``filter`` which accepts a Predicate as argum
 
 .. code:: java
 
-    List<String> vowelStart = Stream.of("apple", "mango", "orange")
-                                    .filter(s -> s.matches("^[aeiou].*"))
-                                    .collect(toList());
+    // Finding words starts with vowel
+    List<String> words = Stream.of("apple", "mango", "orange")
+                                .filter(s -> s.matches("^[aeiou].*"))
+                                .collect(toList());
 
     :Output: [apple, orange]
 
@@ -36,7 +37,7 @@ Stream supports the ``limit(n)`` method accepts a numeric value and returns a ne
 	
 Consuming Stream
 ----------------
-Stream provides two methods ``peek`` and ``forEach`` which accepts a Consumer as argument and applies the consumer to each element.
+Stream provides two methods ``peek`` and ``forEach`` which accepts a Consumer as argument and performs the action on each element.
 
 :Signature: Stream<T> peek(Consumer<? super T> action)
 
@@ -49,6 +50,9 @@ The ``peek`` is an intermediate operation which returns the new stream where as 
     Stream<Integer> stream = Stream.of(1, 2, -3, 4, 5);
     stream.filter(i -> i%2 == 0).peek(System.out::println).toArray();
     stream.filter(i -> i%2 == 0).forEach(System.out::println);
+
+	
+.. seealso:: `forEachOrdered <http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#forEachOrdered-java.util.function.Consumer->`_, performs action on encontered order.
 
 
 Mapping
@@ -130,9 +134,133 @@ Stream interface has ``findAny`` method which returns an arbitrary element from 
 
             Optional<T> findAny()
 
-If you see the signature of above two methods, they return an Optinal object which is a wrapper describing absence or presence of the element because there might be a chance that resulted stream will be empty. Don't worry about Optional now, use get() or orElse() methods to get value fro the optional.
+If you see the signature of above two methods, they return an Optional object which is a wrapper describing absence or presence of the element because there might be chance that these operations were called on empty stream. Don't worry about Optional now, use get() or orElse() methods to get value from the optional.
 
 .. code:: java
 
     Stream.of(5, 10, 15).filter(i -> i % 20 == 0).findAny().orElse(0);
     Stream.of(5, 10, 15).map(i -> i * 2).findFirst().get();
+
+
+Stream Reduction
+----------------
+Stream interface supports overloaded reduction operations that contineously combines elements of the stream until reduced to single output value.
+
+Suppose I asked you to calculate sum of array of numbers, then if i am not wrong your answer would be something like below.
+
+.. code:: java
+
+    int[] arr = { 1, 2, 3, 4, 5, 6 };
+    int result = 0;
+    for (int num : arr) {
+        result += num;
+    }
+
+Now, I changed my requirement to calculate multiplication of elements of the array. So you will update your code to ``result=0`` and then ``result *= num``. So if you notice here all the time you will have an initialization logic, an iteration and an operation on the two elements, only your intialized value and the operation varies. 
+
+To generalize these kind of tasks Stream API has provided overloaded ``reduce`` methods that does the same operation what we saw. If we re-write above codes then they will be 
+
+``Arrays.stream(arr).reduce(0, Integer::sum)``
+
+``Arrays.stream(arr).reduce(1, (i1, i2) -> i1 * i2)``
+
+
+- **T reduce(T identity, BinaryOperator<T> accumulator)**
+	The reduce operation here takes two arguments:
+
+	* identity: The identity element is both the initial value of the reduction and the default result if there are no elements in the stream. In the ``reduce(0, Integer::sum)`` example, the identity element is 0; this is the initial value of the sum of the numbers and the default value if no members exist in the array.
+
+	* accumulator: The accumulator function takes two parameters: a partial result of the reduction (in this example, the sum of all processed integers so far) and the next element of the stream (in this example, an integer). It returns a new partial result. In this example, the accumulator function is a lambda expression that adds two Integer values and returns an Integer value:
+
+- **Optional<T> reduce(BinaryOperator<T> accumulator)**
+
+    This is almost equivalent to first reduction method except there is no initial value. Sometime you might be interested to perform some task in case stream has no elements rather than getting a default value. As an example if the ``reduce`` returns zero, then we are not sure that the sume is zero or it is the default value. Though there is no default value, its return type is an Optional object indicating result might be missing. You can use ``Optional.isPresent()`` to check presense of result.
+
+.. figure:: _static/reduce1.png
+   :align: center
+   :width: 500px
+   :height: 250px
+   
+   **Sequential reduction**
+   
+
+- **U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner)**
+   In first two reduction operations your stream element type and return type were same means before using the reduce method you should convert your elements of type T to type U. But there is an 3 arguments reduce method which facilitates to pass elements of any type. So here `accumulator` accepts previous partial calculated result and element of type T and return type U result. Below example shows the usage of all three reduction operations.
+
+.. code:: java
+
+    // Find the number of characters in a string.
+    List<String> words = Arrays
+             .asList("This is stream reduction example learn well".split(" "));
+    int result = words.stream().map(String::length).reduce(0, Integer::sum);
+    Optional<Integer> opt = words.stream().map(String::length).reduce(Integer::sum);
+    result = words.stream().reduce(0, (i, str) -> i + str.length(), Integer::sum);
+
+We saw the sample use of these reduction methods so let's explore more on this 3-argument reduction operation.
+
+.. code:: java
+
+    public static void reduceThreeArgs(List<String> words) {
+        int result = words.stream().reduce(0, (p, str) -> {
+            System.out.println("BiFunc: " + p + "  " + str);
+            return p + str.length();
+        }, (i, j) -> {
+            System.out.println("BiOpr: " + i + "  " + j);
+            return i + j;
+        });
+    }
+	
+    output:
+        BiFunc: 0  This
+        BiFunc: 4  is
+        BiFunc: 6  stream
+        BiFunc: 12  reduction
+        BiFunc: 21  example
+        BiFunc: 28  learn
+        BiFunc: 33  well
+
+If you have noticed accumulator function itself calculated the final result and it didn't even use BinaryOperator at all then what the combiner is doing here. So the answer here is parallelization. In the begining of the tutorial I told you parallelization is almost free means there will be very minimal modification (use parallelStream method) to your code to run it in parallel. This is not the right time to learn parallelization but i will give you some overal idea just understand usability of `combiner` in this reduction operation.
+
+In parallelization the whole input data set is splitted to multiple chunks, each chunk process individually and combine all the results at the end. So in the above example, complete word set are splitted to groups then they will calculate total number of characters in each group finally sum all these partial results.
+
+.. figure:: _static/parallel_reduction.png
+   :align: center
+   :width: 500px
+   :height: 250px
+   
+   **Parallel reduction**
+
+Now re-run the code in parallel (words.parallelStream()...) and look into the output. Combiner calculate the sum of two partial results.
+::
+
+    BiFunc: 0  This
+    BiFunc: 0  stream
+    BiFunc: 0  well
+    BiFunc: 0  learn
+    BiOpr: 5  4
+    BiFunc: 0  reduction
+    BiFunc: 0  example
+    BiOpr: 9  7
+    BiOpr: 16  9
+    BiFunc: 0  is
+    BiOpr: 2  6
+    BiOpr: 4  8
+    BiOpr: 12  25
+
+
+Infinite Streams
+----------------
+We already discussed, Streams can be derived from different sources:
+
+* From array - Arrays.stream(T[])
+* From known elements - Stream<String>.of("Stream", "is", "great")
+* From file - Files.lines(Paths.get("myfile.txt"))
+
+
+Please visit `Stream sources <streams.html#stream-sources>`__ section for basics of stream sources. The streams generated from above sources are bounded streams where element size is known, where as stream interface supports two static methods ``Stream.iterate()`` and ``Stream.generate`` which returns infinitite streams that will produce unlimited number of elements.
+
+- **Stream.iterate:**
+	: *Signature*: Stream<T> iterate(T seed, UnaryOperator<T> f)
+
+- **Stream.generate:**
+	: *Signature*: Stream<T> generate(Supplier<T> s)
