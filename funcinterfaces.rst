@@ -359,11 +359,11 @@ We have learnt enough to build lambda expressions to create anonymous methods. Y
 - Function<String, Integer> func = str -> str.length();
 - Supplier<Address> sup = () -> emp.getAddress();
 
-Though java8 talks about removing boilerplace codes, there is an efficient way called `method references` to build these lambdas which will be more clear and readable. If we rewrite above two lambda expressions using method reference technique then the representations will be ``String::length`` and ``emp::getAddress``. These representation clearly says we are trying to call length method of a string in first case and getAddess in the second.
+Though java8 talks about removing boiler-plate codes, there is an efficient way called `method references` to build these lambdas which will be more clear and readable. If we rewrite above two lambda expressions using method reference technique then the representations will be ``String::length`` and ``emp::getAddress``. These representation clearly says we are trying to call length method of a string in first case and getAddess in the second.
 
-**Syntax**: <target reference>::<method name>
+**Syntax**: <target reference> **::** <method name>
 
-Above is the syntax for creating method references where the target reference will be placed before the delimeter :: and then the name of method. There are three kinds of method references exists.
+Above is the syntax for creating method references where the target reference will be placed before the delimeter **::** and then the name of method. There are three kinds of method references exists.
 
 - Reference to static method:
     ``Consumer<List<Integer>> c = Collections::sort;`` is an example of method reference for static methods. Compiler will automatically consider it as ``(list) -> Collections.sort(list)``. Here the target type will be the class name that contains the static method.
@@ -402,12 +402,12 @@ Below table shows some of method references and equal lambda expressions.
 .. important::  There are two things you should be aware of before writing method references.
 
 	#. Method reference should not contain paranthesis after method name otherwise it will represent a method invocation that will lead to compilation error.
-	#. It is difficult to wrte meethod signature until and unless you know the signature of the method for which writing method reference.
+	#. It is difficult to write lambdas or method references until and unless you know the signature of the method you are looking for.
 
 
 Constructor as method reference
 -------------------------------
-As you know constructors are kind of special methods so method reference will also applied to constructors. Generally we use ``new`` operator to create an object invoking the constructor. So if you have zero argument constructor or parameterized constructor then you would have written lambdas as below.
+As you know constructors are kind of special methods, method reference will also applicable to constructors. Syntax of method reference for constructor is same as static method. Below are some of examples of method references for constructors.
 
 .. list-table::
    :widths: 20 80
@@ -425,12 +425,14 @@ As you know constructors are kind of special methods so method reference will al
    * - Two-argument
      - BiFunction<String, String> f = (id, name) -> new Employee(id, name)
 
-Syntax of method reference for constructor is same as static method.
+	 
+In the above examples you can clearly see, lambda expression of invoking zero argument constructor matches with functional descriptor of Supplier, similarly one-argument constructors matches to Function and two argument is with BiFunction.
 
-**Syntax:** ClassName::new
+**Syntax:** ClassName **::** new
 
-**Example:** Employee :: new, ArrayList :: new
+**Examples:** Employee :: new, ArrayList :: new
 
+The constructor reference for all the above lambdas are ``Employee::new`` and type of the constructor invocation will be decided based on the target type.
 To understand it better we will see a usecase whose goal is to return a collection of unique ids but the collection type will be supplied as method argument.
 
 .. code:: java
@@ -438,7 +440,7 @@ To understand it better we will see a usecase whose goal is to return a collecti
     public class ConstructorReference {
     
         public static void main(String[] args) {
-            ArrayList<SString> a = method(ArrayList::new);
+            ArrayList<String> a = method(ArrayList::new);
             TreeSet<String> t = method(TreeSet::new);
         }
 

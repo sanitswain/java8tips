@@ -289,7 +289,7 @@ Please visit the `Stream sources <streams.html#stream-sources>`__ section for ba
 
 .. note:: You can use `findAny` or `findFirst` terminal operations to terminate the stream if you assure required result is exist in the stream. Example:
           ``Stream.<Integer>iterate(1, v -> v + 3).filter(i -> i % 5 == 0).findAny().get())``
-          Here we know there will be an element which will be divisible by 5 so you can use findAny to terminate the stream.
+          Here we are sure that there will be an element which will be divisible by 5 so you can use findAny to terminate the stream.
 		  
 
 - **Stream.iterate:**
