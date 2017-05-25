@@ -45,7 +45,7 @@ Comparator interface contains some of static methods that returns another compar
 .. code:: java
 
         // Sorting words based on word lengths
-        Stream.of("java-8", "is", "great", "technology")
+        Stream.of("grapes", "milk", "pineapple", "water-melon")
             .sorted(Comparator.comparing(String::length))
             .forEach(System.out::println);
 
@@ -55,7 +55,7 @@ Comparator interface contains some of static methods that returns another compar
 
 .. code:: java
 
-    Stream.of("java-8", "is", "great")
+    Stream.of("grapes", "milk", "pineapple", "water-melon")
         .sorted(Comparator.comparing(String::length, Comparator.reverseOrder()))
             .forEach(System.out::println);
 
