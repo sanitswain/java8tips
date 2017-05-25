@@ -17,6 +17,7 @@ Contents:
    funcinterfaces
    streams
    streamsapi
+   comparator
 
 
 Indices and tables
