@@ -1,6 +1,6 @@
 Quick Introduction
 ==================
-Java 8 released on March 18, 2014 with lots of best features which enticed most of java programmers. It will improve your coding experience by writting codes using features like declarative programming, passing code as an argument, method reference etc. Every new releases has its own pros and cons and java 8 has too. When it comes to adopting a new language, the first thing we look for is benifits of it. To be honest some of Java 8 features are little confusing but ultimately they are of the most powerful stuffs. Java 8 expects you to write codes that will be more precise, objective driven and highly readable. Soon we will have more clarity on them. 
+Java-8 launched on 18th March 2014 and it was a major release whose features enticed most of java programmers. It has enhanced various components of java like runtime, java compiler, lexical parser, memory management, command line tools and many more. Java-8 will improve your coding experience using features like declarative programming, passing code as an argument, method reference etc. Every new releases has its own pros and cons and java 8 has too. When it comes to adopting a new language, the first thing we look for is the benifits. To be honest some of Java 8 features are little confusing but ultimately they are of the most powerful stuffs. Java 8 helps you to write codes that will be more precise, objective driven and highly readable. Soon we will have more clarity on them. 
 
 Passing methods as parameter removes verbosity from the code and in fact increases reusability, Streams helps in writing SQL like syntaxes, parallelization that is almost free- speed of the execution with efficient use of modern computers having multicore processors, handling nullable values using Optional and many more. Initially stuffs will be little confusing but once you used to it, you will be reluctant to write code with out using it. Let's look into the below usecase and understand why java 8 is different then all the releases.
 
@@ -42,7 +42,7 @@ Isn't it great. I just said group on technologies then extract salary from the e
 I am excited to walk you through other features in detail and hope you are too, so let's get started...
 
 
-.. note:: It's always a best practice to read the official doc so i would suggest you to visit the official java site for more inforrmation.
+.. note:: It's always a best practice to read the official doc so i would suggest you to visit the official java site for more information.
 
 
 

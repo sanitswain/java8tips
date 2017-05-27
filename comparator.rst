@@ -1,6 +1,6 @@
 Comparator
 ==========
-Comparator is there since jdk 1.2 and almost all of us know how important it is. Java-8 came up with couple of updates to the Comparator operations given below.
+Comparator is there since jdk 1.2 and almost all of us know how important it is. Java-8 came up with couple of updates to the Comparator operations as given below.
 
 - Additionl default and static methods added into ``Comparator`` interface to support pipeline of stream operations.
 - ``String`` class added with ``CaseInsensitiveComparator`` to sort by ignoring the case.

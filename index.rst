@@ -18,6 +18,7 @@ Contents:
    streams
    streamsapi
    comparator
+   collectors
 
 
 Indices and tables
