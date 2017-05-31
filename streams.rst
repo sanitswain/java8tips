@@ -1,7 +1,7 @@
 ..  _stream_basics:
 
-Streams
-=======
+Introduction to Streams
+=======================
 Streams are one of the best feature of java 8 that let you write codes in declarative programming style rather than typical imperative programming technique. Declarative programming expect you to mention what you want not how to achieve them. Many of the technologies like unix, database etc are already working on this fashion. In database we write ``SELECT technology, max(salary) from employee group by salary`` and it returns highest salary paid in each technology. In case of unix we just combine group of commands `(ls -l | grep "search string" | sort)` and ask unix to execute the operations.
 
 Just look into the below example.

@@ -61,8 +61,8 @@ Let's discuss the methods declared by the collctor interface:
 
 
 	
-Custom collector
-----------------
+Implementing collectors
+-----------------------
 Now we have enough idea on what are the methods collector interface provides and how does they work. So let's implement our own collector that takes a set of `Employee` objects and generates a XML content.
 
 .. code:: java
@@ -122,7 +122,7 @@ Now we have enough idea on what are the methods collector interface provides and
     </employees>
 
 
-In this example we created a separet ToXMLCollector class by overriding all of the collector methods but ``Collector`` interface also has ``Collector.of`` static method that accepts the collector behaviors and returns a Collector instance.
+In this example we created a separate ToXMLCollector class by overriding all of the collector methods but ``Collector`` interface also has ``Collector.of`` static methods that accepts the collector behaviors and returns a anonymous Collector instance.
 
 
 - Collector<T, A, R> of(Supplier<A> supplier, BiConsumer<A, T> accumulator, 
@@ -130,3 +130,13 @@ In this example we created a separet ToXMLCollector class by overriding all of t
 		
 - Collector<T, A, R> of(Supplier<A> supplier, BiConsumer<A, T> accumulator, 
         BinaryOperator<A> combiner, Characteristics... characteristics)
+		
+Using these helper method our ``ToXMLCollector`` can also be implemented as:
+
+.. code:: java
+
+  Collector.<Employee, StringBuffer, String>of(StringBuffer::new,
+    (sb, e) -> sb.append(String.format(xmlstr, e.empid, e.name, e.technology)),
+       (sb1, sb2) -> sb1.append(sb2.toString()),
+          sb -> sb.insert(0, "<employees>").append("\n</employees>").toString(),
+             Collections.emptySet());

@@ -19,6 +19,7 @@ Contents:
    streamsapi
    comparator
    collectors
+   advcollectors
 
 
 Indices and tables
