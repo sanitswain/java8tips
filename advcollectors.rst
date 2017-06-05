@@ -40,8 +40,8 @@ Collecting stream elements to a `java.util.Collection` is the most widely used o
                 .collect(Collectors.toCollection(TreeSet::new));
 
 
-Strings concatenation
----------------------
+Strings joining
+---------------
 Collectors utility class provides some of overloaded methods that concatenates stream elements into a single string either by separating them with a delimiter if provided.
 
 .. list-table::
@@ -98,9 +98,10 @@ Now let's group the trade deals according to country region.
 
 .. code:: java
 
-    Map<String, List<Trade>> map = 
-            trades.stream().collect(Collectors.groupingBy(Trade::getRegion));
+    Map<String, List<Trade>> map =  trades.stream()
+        .collect(Collectors.groupingBy(Trade::getRegion));
 
+			
     Output:
     {
        APAC: [T1002, T1005, T1009],
@@ -108,12 +109,12 @@ Now let's group the trade deals according to country region.
        NA: [T1001, T1003, T1004, T1006]
     }
 
-In the above example we have passed ``Trade.getRegion()`` as the classification function. ``grouping`` method will apply the given classification function to every element T to derive key K and then it will place the stream element into the corresponding map bucket. The grouping operation we just perfomed is very simple and straight-forward example but Collectors also support overloaded factory methods for multi-level grouping such as grouping trade detals according to region and currency.
+In the above example we passed ``Trade.getRegion()`` as the classification function. ``grouping`` method will apply the given classification function to every element T to derive key K and then it will place the stream element into the corresponding map bucket. The grouping operation we just perfomed is very simple and straight-forward example but Collectors also support overloaded factory methods for multi-level grouping such as grouping trade detals according to region and currency.
 
 **groupingBy(Function<T, K> classifier, Collector<T, A, D> downstream):**
 This overloaded method accepts an additional downstream collector to which value associated with a key will be supplied for further reduction. The classification function maps elements T to some key type K and generates groups of List<T>. The downstream collector will then operates on each group of elements of type T and produces a result of type D, at last collector will produces a result of Map<K, D>.
 
-Below example shows grouping trade deals according to region and currency. The end result from this example will be ``Map<Region, Map<Currency, List<Trade>>>``.
+Below example is grouping trade deals according to region and currency. The end result from this example will be ``Map<Region, Map<Currency, List<Trade>>>``.
 
 .. code:: java
 
@@ -122,9 +123,98 @@ Below example shows grouping trade deals according to region and currency. The e
                     Collectors.groupingBy(Trade::getCurrency)));
     System.out.println(map2);
 	
+	
     Output:
     {
        NA={CAD=[T1006], USD=[T1001, T1003, T1004]}, 
        EMEA={EUR=[T1007], JPY=[T1008]}, 
        APAC={SGD=[T1002, T1005], INR=[T1009]}
     }
+
+There is no limit on grouping, you can call nested grouping any times you want. Now let's look into the ``groupingBy`` method signature once again. Does this method only meant for multi-level grouping? No. The method accepts a ``Collector`` as a second argument and we can do much more by passing different Collector implementations. Below example demonstrates counting number of deals in each region.
+
+.. code:: java
+
+    Map<String, Long> map2 = trades.stream()
+        .collect(Collectors.groupingBy(Trade::getRegion, Collectors.counting()));
+	
+    Output:
+    {NA=4, EMEA=2, APAC=3}
+
+**groupingBy(Function<T,K> f, Supplier<M> mapFactory, Collector<T, A, D> dc):**
+Just like `toCollection` method we saw in the begining, this method also facilitates to pass a map factory to decide the group container type. The default map object type is ``Hashmap`` so you can use this method if some other map type required.
+
+	
+.. seealso:: All these grouping collectors doesn't no guarantee on the thread-safety of the Map returned, so check ``Collectors.groupingByConcurrent`` methods for thread-safety operations.
+	
+	
+Partitioning elements
+---------------------
+Partitioning a special type of grouping but it will always contain two groups: FALSE and TRUE. It returns a Collector which partitions the input elements according to a Predicate supplied, and organizes them into a Map<Boolean, List<T>>. Following example shows partitioning deals to USD and no USD deals.
+
+.. code:: java
+
+    Map<Boolean, List<Trade>> map2 = trades.stream()
+        .collect(Collectors.partitioningBy(t -> "USD".equals(t.getCurrency())));
+    System.out.println(map2);
+	
+	
+    Output:
+    {
+       false=[T1002, T1005, T1006, T1007, T1008, T1009], 
+       true=[T1001, T1003, T1004]
+    }
+
+
+Reducing collectors
+-------------------
+Like ``java.util.stream.Stream``, Collectors class also provides some overloaded reducing methods. To perform simple reduction operation on a stream,  ``Stream.reduce(Object, BinaryOperator)`` methods can be used. The purpose of reducing() collectors are mostly for multi-level reduction operations. Following are list of overloaded reducing collectors given by Collectors class.
+
+.. list-table::
+
+   * - reducing(T identity, BinaryOperator<T> op)
+   * - reducing(BinaryOperator<T> op)
+   * - reducing(U identity, Function<T,U> mapper,  BinaryOperator<U> op)
+
+Collectors reducing methods are similar to `Stream.reduce` operation. If you haven't checked them, then see the `Stream API <streamsapi.html#stream-reduction>`__ section.
+
+
+Arithmetic & Summerizing
+------------------------
+Collectors also has some of methods that returns collector to perform arithmetic operations like finding max, min, sum and average. Below are the method defined in Collectors utility class.
+
+.. list-table::
+
+   * - Collector<T, ?, Optional<T>> minBy(Comparator<T> comparator)
+   * - Collector<T, ?, Optional<T>> maxBy(Comparator<T> comparator)
+   * - Collector<T, ?, XXX> summingXXX(ToXXXFunction<T> mapper)
+   * - Collector<T, ?, XXX> averagingXXX(ToXXXFunction<T> mapper)
+  
+I don't have to explain what these method do, they are self explanatory. Collectors has individual ``summing`` and ``averaging`` methods for these three primitive types: int, double and long. As like reduction operations, arithmetic fuctions are also available in IntStream, DoubleStream and LongStream interfaces that can be used for simple stream reduction. These arithmetic collectors will be helpful for nested reduction operations through other collectors.
+
+Apart from individual arithmetic operations, Collectors has also ``summarizingXXX`` factory methods that will perform all of these arithmetic operations all togather. The collector produced by summerizing function will return ``XXXSummaryStatistics`` class which is a container for holding results calculated for these arithmetic operations.
+
+**Method signature**
+
++----------------------------------------------------------------------------------------+
+| Collector<T, ?, DoubleSummaryStatistics> summarizingDouble(ToDoubleFunction<T> mapper) |
++----------------------------------------------------------------------------------------+
+
+The `summarizingDouble` method accepts a ``ToDoubleFunction`` that will apply on the stream elements of type T to generate double type values on which summarization functionality will be executed. Below example demonstrates the usage of ``summarizingDouble`` method.
+
+.. code:: java
+
+    Map<String, DoubleSummaryStatistics> map = trades.stream()
+            .collect(Collectors.groupingBy(Trade::getRegion, 
+                Collectors.summarizingDouble(Trade::getNotional)));
+				
+    DoubleSummaryStatistics naData = map.get("NA");
+    System.out.printf("No of deals: %d\nLargest deal: %f\nAverage deal cost: %f\nTotal traded amt: %f",
+        naData.getCount(), naData.getMax(), naData.getAverage(), naData.getSum());
+
+
+    Output:
+    No of deals: 4
+    Largest deal: 540000
+    Average deal cost: 172250
+    Total traded amt: 689000
