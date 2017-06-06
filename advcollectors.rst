@@ -66,7 +66,7 @@ A common database operation is to group records based on one or multiple columns
 
 The classification function derives grouping keys of type K from stream elements. The collector produces a Map<K, List<T>> whose keys are the values resulting from applying the classification function to the input elements, and values are Lists containing the input elements which map to the associated key under the classification function.
 
-Below is the entity class definition we will be using through out the collector examples.
+Below is the entity class definition and the data we will be using through out the collector examples.
 
 .. code:: java
 
@@ -218,3 +218,58 @@ The `summarizingDouble` method accepts a ``ToDoubleFunction`` that will apply on
     Largest deal: 540000
     Average deal cost: 172250
     Total traded amt: 689000
+
+
+Miscellaneous
+-------------
+We saw `grouping` and `partitioning` functions that accepts another downstream collector used for nesting operations. Collectors class also provides two additional methods mostly used for such nested complex situations.
+
+.. list-table::
+
+   * - Collector<T,A,RR> collectingAndThen(Collector<T,A,R> c, Function<R,RR> f) 
+   * - Collector<T, ?, R> mapping(Function<T,U> mapper, Collector<U, A, R> c)
+
+|
+
+1. **collectingAndThen(Collector<T,A,R> downstream, Function<R,RR> finisher)**
+
+  It will return a collector that will additionally perform a finishing transformation after the downstream collector collected elements. We will see few examples with explanation to get more clarity on the usage.
+  
+  ``Set<Trade> set = trades.stream().collect(collectingAndThen(toSet(), Collections::unmodifiableSet))``
+  
+  In this example `toSet` collector will first collect elements to a set and then the resulting set will be applied to the finisher function to return a unmodifiable set. This is the simplest usage of `collectingAndThen` method and it has more meaning when used with nested collectors. Below code snippet demonstrates an advanced usage of the method that is finding maximum valued deal in each region.
+  
+  .. code:: java
+  
+    Map<String, Optional<Trade>> map1 = trades.stream()   // Solution-1
+        .collect(groupingBy(Trade::getRegion, maxBy(comparing(Trade::getNotional))));
+
+		
+    Map<String, Trade> map2 = trades.stream()             // Solution-2
+	    .collect(groupingBy(Trade::getRegion, 
+		    collectingAndThen(maxBy(comparing(Trade::getNotional)), Optional::get)));
+
+
+  We already know that ``Collectors.maxBy`` produces values of `Optional` types but actually we were expecting for Trade typed values. The ``collectingAndThen`` is first calculating the maximum valued deal wrapped with `java.util.Optional` and then passes to the finisher function to call ``Optional.get()`` which will then extract Trade object out of it.
+
+.. figure:: _static/collectingandthen.png
+   :align: center
+   :width: 500px
+   :height: 250px
+   
+   **Solution-2 flow diagram**
+
+2. **mapping(Function<T,U> mapper, Collector<U, A, R> downstream)**
+
+  ``collectingAndThen()`` resulting collector first collect elements and then applies the transformation function but the ``mapping`` collector applies the function before collecting elements. It returns a collector which applies the mapping function to the input elements and provides the mapped results to the downstream collector. As like `collectingAndThen`, the mapping() collectors are most useful when used in a multi-level reduction, such as downstream of a groupingBy or partitioningBy. For example, accumulate the set of trade ids in each region.
+  
+  .. code:: java
+  
+    Map<String, Set<String>> map = trades.stream()
+	    .collect(groupingBy(Trade::getRegion, mapping(Trade::getTradeId, toSet())));
+    System.out.println(map);
+
+.. figure:: _static/mapping.png
+   :align: center
+   :width: 500px
+   :height: 250px
