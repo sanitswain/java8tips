@@ -1,6 +1,6 @@
 Predefined Collectors
 =====================
-In the previous chapter you got an overal idea on how does collector works and how to implement your own collector. Java-8 has introduced a new utilility class called ``java.util.stream.Collectors`` containing many factory methods which provides most commonly used ``Collector`` implentations. Collectors mainly offers the below functionalities:
+In the previous chapter you got an overal idea on how does collector works and how to implement custom collectors. Java-8 has introduced ``java.util.stream.Collectors`` class containing many factory methods that provides most commonly used ``Collector`` implementations. Collectors mainly offers following functionalities:
 
 - Collecting elements to a `java.util.Collection`
 - Joining String elements to a single String

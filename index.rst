@@ -20,6 +20,7 @@ Contents:
    comparator
    collectors
    advcollectors
+   optional
 
 
 Indices and tables
