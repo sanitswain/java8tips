@@ -85,8 +85,8 @@ The benifits over using Optional are:
 - No need to write null checks explicitely, operations will be performed only if value is present.
 
 
-Creating Optionals
-------------------
+Optional Construction
+---------------------
 Creating optional objects are damn easy, it provides following factory methods to create Optionals.
 
 - **Empty Optional:**
@@ -111,7 +111,10 @@ Creating optional objects are damn easy, it provides following factory methods t
  
  There is no other difference in using ``Optional.of`` or ``Optional.ofNullable`` except `of()` methods creates the perception that given value is mandatory field and passing null is the unaccepted criteria.
 
+ 
+ .. note:: Most of languages has concept of missing values and they handle it in different ways. Scala has a safe way to navigate through values, Google's Guava library and Groovy language has same construct as Java Optional, so we can say java Optional can be inspired from them.
 
+ 
 Operating on Optionals
 ----------------------
 Optional provides three basic methods: `map, flatMap` and `filter` to perform any kind of common task. Like Streams these operations can also be chained togather to perform composite tasks.
@@ -249,6 +252,7 @@ As like streams, Optionals also have primitive flavours- OptionalInt, OptionalLo
 
 
 **Optionals can't be serialized:**
+
 Optionals were designed to handle missing values. These were not intended for use as a field type so it doesn't implement Serializable. In case you need to have a serializable domain model, implement getter methods returning optionals given below.
 
 .. code:: java

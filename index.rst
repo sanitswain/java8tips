@@ -21,6 +21,7 @@ Contents:
    collectors
    advcollectors
    optional
+   default
 
 
 Indices and tables
