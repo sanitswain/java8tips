@@ -91,8 +91,8 @@ This was possible because the method is called on a single interface reference a
     
     interface A {
         default String print() {
-		    return "A";
-	    }
+            return "A";
+        }
     }
 	
     class MyClass {
@@ -148,20 +148,20 @@ This was possible because the method is called on a single interface reference a
     interface A {
         default String print() {
             return "A";
-	    }
+        }
     }
 	
     interface B {
         default String print() {
             return "B";
-	    }
+        }
     }
 	
     public class DefaultTest implements A, B {
 	
         public String print() {
             return A.super.print();
-	    }
+        }
 
         public static void main(String[] args) {
             System.out.println(new DefaultTest().print());

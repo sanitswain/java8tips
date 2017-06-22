@@ -22,6 +22,7 @@ Contents:
    advcollectors
    optional
    default
+   forkjoin
 
 
 Indices and tables

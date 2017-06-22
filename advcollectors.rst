@@ -20,26 +20,64 @@ Collecting stream elements to a `java.util.Collection` is the most widely used o
    * - Collector<T, ?, List<T>> toList()
    * - Collector<T, ?, Set<T>> toSet()
    * - Collector<T, ?, C> toCollection(Supplier<C> collectionFactory)
+   * - Collector<T, ?, Map<K,U>> toMap(Function<T, K> keyMapper, Function<T, U> valueMapper)
+   
   
 - **toList():**
     Returns a Collector that will accumulate stream elements into ArrayList in the encountered order.
 
-    List<String> list = Stream.of("java", ".net", "python")
+    .. code:: java
+
+      List<String> list = Stream.of("java", ".net", "python")
                 .map(String::toUpperCase).collect(Collectors.toList());
+
 
 - **toSet():**
     Returns a Collector that will accumulate stream elements into HashSet object.
 
-    Set<String> set = Stream.of("java", ".net", "python")
+    .. code:: java
+
+      Set<String> set = Stream.of("java", ".net", "python")
                 .map(String::toUpperCase).collect(Collectors.toSet());
+
 
 - **toCollection(Supplier<C> collectionFactory):**
     The first two methods returns collectors using ArrayList and HashSet as the container, but in case you need some other Collection implementations then `toCollection` method can be helpful which accept a supplier representing the type of the container to be used for the accumulation process.
+
+    .. code:: java
 	
-    TreeSet<String> set = Stream.of("java", ".net", "python").map(String::toUpperCase)
+      TreeSet<String> set = Stream.of("java", ".net", "python").map(String::toUpperCase)
                 .collect(Collectors.toCollection(TreeSet::new));
 
 
+- **toMap(Function<T, K> keyMapper, Function<T, U> valueMapper):**
+    Returns a Collector that accumulates elements into a Map whose keys are derived from keyMapper function and values are from valueMapper function.
+
+    .. code:: java
+
+      Map<String, Integer> result = Stream.of("java", ".net", "python")
+            .collect(Collectors.toMap(String::toUpperCase, String::length));
+
+      Output: {JAVA=4, .NET=4, PYTHON=6}
+
+	  
+    Sometime it is very obvious that the keyMapper function will derive duplicate key either by same element in the stream or the mapper function is responsible for that. In such situtaion `toMap` will throw ``java.lang.IllegalStateException: Duplicate key``. Collectors class has another overloaded method that takes a merge function to decide the action to be taken if duplicate key is found.
+	
+    ``toMap(Function<T, K> keyMapper, Function<T, U> valueMapper, BinaryOperator<U> mergeFunction)``
+	
+    .. code:: java
+
+      Map<String, Integer> result = Stream.of("java", ".net", "python", "jAvA")
+            .collect(Collectors.toMap(String::toUpperCase, String::length, (key1, key2) -> key1));
+
+      Output: {JAVA=4, .NET=4, PYTHON=6}	
+	
+	
+    Here we are passing a merge function thet says take the first key if two keys are duplicates. You can provide a function that will generate a composite key using both keys. The first two ``toMap`` method will use `HashMap` as the accumulator container. Collectors has also a 4-arg overloaded toMap method that takes a supplier to define the `Map` type will be used for accumulation. 
+	
+    ``toMap(Function<T, K> km, Function<T, U> vm, BinaryOperator<U> mf, Supplier<M> mapSupplier)``
+	
+	
 Strings joining
 ---------------
 Collectors utility class provides some of overloaded methods that concatenates stream elements into a single string either by separating them with a delimiter if provided.
