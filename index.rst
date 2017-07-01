@@ -9,6 +9,7 @@ Welcome to Java 8 tutorial!
 Contents:
 
 .. toctree::
+   :numbered:
    :maxdepth: 2
 
    quickintro
@@ -23,6 +24,7 @@ Contents:
    optional
    default
    forkjoin
+   Parallel Processing <parallelization>
 
 
 Indices and tables

@@ -73,7 +73,7 @@ Collecting stream elements to a `java.util.Collection` is the most widely used o
       Output: {JAVA=4, .NET=4, PYTHON=6}	
 	
 	
-    Here we are passing a merge function thet says take the first key if two keys are duplicates. You can provide a function that will generate a composite key using both keys. The first two ``toMap`` method will use `HashMap` as the accumulator container. Collectors has also a 4-arg overloaded toMap method that takes a supplier to define the `Map` type will be used for accumulation. 
+    Here we are passing a merge function that says "consider the first key if two keys are duplicates". You can also provide some other merge function that will generate a composite key using both keys. The first two ``toMap`` methods will use `HashMap` as the accumulator container. Collectors has also a 4-arg overloaded toMap method that takes a supplier to define the `Map` type will be used for accumulation. 
 	
     ``toMap(Function<T, K> km, Function<T, U> vm, BinaryOperator<U> mf, Supplier<M> mapSupplier)``
 	

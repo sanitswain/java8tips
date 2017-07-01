@@ -309,26 +309,26 @@ We visited couple of functional interfaces which are defined as generic types. G
         public static void main(String[] args) {
             int[] arr = IntStream.range(1, 50000).toArray();
             BinaryOperator<Integer> f1 = (i1, i2) -> i1 + i2;
-    	    IntBinaryOperator f2 = (i1, i2) -> i1 + i2;
+            IntBinaryOperator f2 = (i1, i2) -> i1 + i2;
 
-    	    RunningTime.calculate((Consumer<Void>) v -> reduce1(arr, f1));
-    	    RunningTime.calculate((Consumer<Void>) v -> reduce2(arr, f2));
+            RunningTime.calculate((Consumer<Void>) v -> reduce1(arr, f1));
+            RunningTime.calculate((Consumer<Void>) v -> reduce2(arr, f2));
     	}
 
-    	static int reduce1(int[] arr, BinaryOperator<Integer> operator) {  
-    	    int result = arr[0];
-    	    for (int i = 1; i < arr.length; i++) {
-    	        result = operator.apply(result, arr[i]);  // Boxing and Unboxing here
-    	    }
-    	    return result;
+        static int reduce1(int[] arr, BinaryOperator<Integer> operator) {  
+            int result = arr[0];
+            for (int i = 1; i < arr.length; i++) {
+                result = operator.apply(result, arr[i]);  // Boxing and Unboxing here
+            }
+            return result;
     	}
 
         static int reduce2(int[] arr, IntBinaryOperator operator) {
-    	    int result = arr[0];
-    	    for (int i = 1; i < arr.length; i++) {
-    		    result = operator.applyAsInt(result, arr[i]);
-    	    }
-    	    return result;
+            int result = arr[0];
+            for (int i = 1; i < arr.length; i++) {
+                result = operator.applyAsInt(result, arr[i]);
+            }
+            return result;
         }
     }
 

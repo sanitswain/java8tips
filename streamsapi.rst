@@ -166,17 +166,17 @@ To generalize these kind of tasks Stream API has provided overloaded ``reduce`` 
 
 
 - **T reduce(T identity, BinaryOperator<T> accumulator)**
-	The reduce operation here takes two arguments:
+  The reduce operation here takes two arguments:
 
-	* identity: The identity element is both the initial value of the reduction and the default result if there are no elements in the stream. In the ``reduce(0, Integer::sum)`` example, the identity element is 0; this is the initial value of the sum of the numbers and the default value if no members exist in the array.
+  * identity: The identity element is both the initial value of the reduction and the default result if there are no elements in the stream. In the ``reduce(0, Integer::sum)`` example, the identity element is 0; this is the initial value of the sum of the numbers and the default value if no members exist in the array.
 
-	* accumulator: The accumulator function takes two parameters: a partial result of the reduction (in this example, the sum of all processed integers so far) and the next element of the stream (in this example, an integer). It returns a new partial result. In this example, the accumulator function is a lambda expression that adds two Integer values and returns an Integer value:
+  * accumulator: The accumulator function takes two parameters: a partial result of the reduction (in this example, the sum of all processed integers so far) and the next element of the stream (in this example, an integer). It returns a new partial result. In this example, the accumulator function is a lambda expression that adds two Integer values and returns an Integer value:
 
 - **Optional<T> reduce(BinaryOperator<T> accumulator)**
 
-    This is almost equivalent to first reduction method except there is no initial value. Sometime you might be interested to perform some task in case stream has no elements rather than getting a default value. As an example if the ``reduce`` returns zero, then we are not sure that the sume is zero or it is the default value. Though there is no default value, its return type is an Optional object indicating result might be missing. You can use ``Optional.isPresent()`` to check presense of result.
+  This is almost equivalent to first reduction method except there is no initial value. Sometime you might be interested to perform some task in case stream has no elements rather than getting a default value. As an example if the ``reduce`` returns zero, then we are not sure that the sume is zero or it is the default value. Though there is no default value, its return type is an Optional object indicating result might be missing. You can use ``Optional.isPresent()`` to check presense of result.
 
-.. figure:: _static/reduce1.png
+  .. figure:: _static/reduce1.png
    :align: center
    :width: 500px
    :height: 250px
@@ -185,9 +185,9 @@ To generalize these kind of tasks Stream API has provided overloaded ``reduce`` 
    
 
 - **U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner)**
-   In first two reduction operations your stream element type and return type were same means before using the reduce method you should convert your elements of type T to type U. But there is an 3 arguments reduce method which facilitates to pass elements of any type. So here `accumulator` accepts previous partial calculated result and element of type T and return type U result. Below example shows the usage of all three reduction operations.
+  In first two reduction operations your stream element type and return type were same means before using the reduce method you should convert your elements of type T to type U. But there is an 3 arguments reduce method which facilitates to pass elements of any type. So here `accumulator` accepts previous partial calculated result and element of type T and return type U result. Below example shows the usage of all three reduction operations.
 
-.. code:: java
+  .. code:: java
 
     // Find the number of characters in a string.
     List<String> words = Arrays
@@ -196,9 +196,9 @@ To generalize these kind of tasks Stream API has provided overloaded ``reduce`` 
     Optional<Integer> opt = words.stream().map(String::length).reduce(Integer::sum);
     result = words.stream().reduce(0, (i, str) -> i + str.length(), Integer::sum);
 
-We saw the sample use of these reduction methods so let's explore more on this 3-argument reduction operation.
+  We saw the sample use of these reduction methods so let's explore more on this 3-argument reduction operation.
 
-.. code:: java
+  .. code:: java
 
     public static void reduceThreeArgs(List<String> words) {
         int result = words.stream().reduce(0, (p, str) -> {
@@ -211,27 +211,27 @@ We saw the sample use of these reduction methods so let's explore more on this 3
     }
 	
     output:
-        BiFunc: 0  This
-        BiFunc: 4  is
-        BiFunc: 6  stream
-        BiFunc: 12  reduction
-        BiFunc: 21  example
-        BiFunc: 28  learn
-        BiFunc: 33  well
+    BiFunc: 0  This
+    BiFunc: 4  is
+    BiFunc: 6  stream
+    BiFunc: 12  reduction
+    BiFunc: 21  example
+    BiFunc: 28  learn
+    BiFunc: 33  well
 
-If you have noticed accumulator function itself calculated the final result and it didn't even use BinaryOperator at all then what the combiner is doing here. So the answer here is parallelization. In the begining of the tutorial I told you parallelization is almost free means there will be very minimal modification (use parallelStream method) to your code to run it in parallel. This is not the right time to learn parallelization but i will give you some overal idea just understand usability of `combiner` in this reduction operation.
+  If you have noticed accumulator function itself calculated the final result and it didn't even use the last parameter `BinaryOperator combiner` at all then what the combiner is doing here. So the answer here is parallelization. In the begining of the tutorial I told you parallelization is almost free, there will be very minimal modification (use parallelStream method) require to run your code in parallel. This is not the right time to learn parallelization but i will give you some overal idea just to get the visibility of `combiner` in this reduction operation.
 
-In parallelization the whole input data set is splitted to multiple chunks, each chunk process individually and combine all the results at the end. So in the above example, complete word set are splitted to groups then they will calculate total number of characters in each group finally sum all these partial results.
+  In parallelization the whole input data set is splitted to multiple chunks, each chunk process individually and combine all the results at the end. So in the above example, complete word set are splitted to groups then they will calculate total number of characters in each group finally sum all these partial results.
 
-.. figure:: _static/parallel_reduction.png
+  .. figure:: _static/parallel_reduction.png
    :align: center
    :width: 700px
    :height: 350px
    
    **Parallel reduction**
 
-Now re-run the code in parallel (words.parallelStream()...) and look into the output. Combiner calculate the sum of two partial results.
-::
+  Now re-run the code in parallel (words.parallelStream()...) and look into the output. Combiner calculate the sum of two partial results.
+  ::
 
     BiFunc: 0  This
     BiFunc: 0  stream
