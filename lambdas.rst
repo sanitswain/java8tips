@@ -69,7 +69,7 @@ But in JDK 1.7 right hand side generic type become optional by changing it to th
 	2. List<String> list = new ArrayList<>();
 	   list.addAll(Arrays.asList());
 
-If you compile above code in JDK 1.7, then the statement-1 will be compiled successfully but not statement-2 and it will generate "``The method addAll(Collection<? extends String>) in the type List<String> is not applicable for the arguments (List<Object>)``" error message. So what really happened in statement-2 where as both of the statements looks similar. Just look into the signature of above used methods.
+If you compile above code in JDK 1.7, then the statement-1 will be compiled successfully but not statement-2 and it will generate ``The method addAll(Collection<? extends String>) in the type List<String> is not applicable for the arguments (List<Object>)`` error message. So what really happened in statement-2 where as both of the statements looks similar. Just look into the signature of above used methods.
 
 +---------------------------------------------------+ 
 |     Method Signatures                             | 

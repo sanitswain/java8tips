@@ -42,7 +42,7 @@ Here to the reduce method we are passing a BiFunction (2nd argument) which denom
 |                ArrayListSpliterator<>();
 		
 
-Parallelstream() interanally calls ``spliterator()`` on the collection object which returns a Spliterator implementation that provides the logic of splitting a task. Every source or collection has their own spliterator implementations. Using these spliterators, parallel stream splits the task as long as possible and finally when the task becomes too small it executes it sequentially and merges partial results from all the sub tasks.
+Parallelstream() calls ``spliterator()`` on the collection object which returns a Spliterator implementation that provides the logic of splitting a task. Every source or collection has their own spliterator implementations. Using these spliterators, parallel stream splits the task as long as possible and finally when the task becomes too small it executes it sequentially and merges partial results from all the sub tasks.
 	
 Spliterator
 -----------
