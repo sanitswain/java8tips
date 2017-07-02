@@ -92,7 +92,7 @@ You saw detailed descriptions on spliterator defined methods, now we will see a 
 
      public static void main(String[] args) {
         Random random = new Random(100);
-        int[] array = IntStream.rangeClosed(1, 10000).map(random::nextInt)
+        int[] array = IntStream.rangeClosed(1, 1_000_000).map(random::nextInt)
                                .map(i -> i * i + i).skip(20).toArray();
         int max = StreamSupport.stream(new FindMaxSpliterator(array, 0, array.length - 1), true)
                                .reduce(0, Integer::max, Integer::max);
@@ -121,9 +121,10 @@ You saw detailed descriptions on spliterator defined methods, now we will see a 
 
         @Override
         public Spliterator<Integer> trySplit() {
-            if (end - start < 100) {
+            if (end - start < 1000) {
                 return null;
             }
+			
             int mid = (start + end) / 2;
             int oldstart = start;
             start = mid + 1;
@@ -142,3 +143,15 @@ You saw detailed descriptions on spliterator defined methods, now we will see a 
      }
   }
 
+The FindMaxSpliterator is trying to find out the largest element in an array. Every time `trySplit` method checks the remaining size of the elements in current spliterator and creates a second spliterator if size is more than 100. Once the elements size reaches under 1000, it calls `tryAdvance` method repeatedly on those 1000 (may be less) elements.
+
+.. figure:: _static/parallel_proc_1.png
+   :align: center
+   :width: 650px
+   :height: 300px
+   
+   **Spliterator Workflow**
+
+Conclusion
+----------
+Parallel stream make use of both ForkJoinPool and Spliterator to process elements parallelly. It is not the wise decision to use parallel stream all the time without comparing running time between sequential and parallel processing. In the above example we have considered 1_000_000 number of elements which is quite huge and can make sense if executing in parallel, but suppose there were only 5000 elements then parallel stream will give you higher running time compared to sequential because it also includes the time taken for spitting and merging the partial results.

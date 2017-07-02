@@ -41,7 +41,8 @@ ForkJoinTask has large set of methods but the methods we will be using most of t
 
 The idea behind the fork-join is to divide the task into multiple smaller chunks and execute them independently. The compute method is responsible to split the task if it is not small enough to execute. In the pseudo code we have split the task into two but it can be split into more also. When you call `fork` on the first task it will be pushed into the queue and may be executed by some other thread, then you call compute method on second. After the competion of second task we will call join on the first task to wait for its completion. We will quickly see a complete example which demonstrates finding the largest element in an array.
 
-.. code:: java
+.. code-block:: java
+  :linenos:
 
   public class ForkJoinPoolTest {
 
