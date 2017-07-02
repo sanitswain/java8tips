@@ -26,14 +26,14 @@ Similarly stream also has ``sequential()`` method that converts parallel stream 
      .parallel()
      .sum();
 
-By now you already have idea that tasks are divided and processed individually in parallel stream. Now it is the time to see how parallel stream internally works. To understand it better we will see following example to find largest element in an array.
+By now you already have idea that tasks are divided and processed individually in parallel stream. Now let's see how parallel stream internally works. To understand it better we will see following example to find largest element in an array.
 
 .. code:: java
 			
     int max = numbers.parallelStream().reduce(0, Integer::max, Integer::max);
     System.out.println("Parallel: " + max);
 
-Here to the reduce method we are passing a BiFunction (2nd argument) which denominates the task to be performed when the task become too small and can not be splitted again. The last argument is a BinaryOperator shows the operation to be perfomed on the two partial results collected from sub tasks. If you want to know about `Stream.reduce` method please visit the `Stream <streamsapi.html#stream-reduction>`__ chapter. Below is the call stack of parallelStream() method.
+Here to the reduce method we are passing a BiFunction (2nd argument) which denominates the task to be performed when the task become too small and can be executed without splitting again. The last argument is a BinaryOperator shows the action should taken on the two partial results collected from sub tasks. If you want to know about `Stream.reduce` method please refer the `Stream <streamsapi.html#stream-reduction>`__ chapter. Below is the call stack of parallelStream() method.
 
 |
 |     parallelStream()
@@ -46,7 +46,99 @@ Parallelstream() calls ``spliterator()`` on the collection object which returns 
 	
 Spliterator
 -----------
+Spliterator is the new interface introduced in jdk8 that traverses and partitions elements of a source. The name itself suggests that, these are the iterators that can be splitted as and when require. As like Iterator, Spliterator is also used for traversing elements but meant to be used within stream only. Spliterator has defined some important methods that drives both sequential and parallel stream processing.
+
+.. code:: java
+
+  public interface Spliterator<T> {
+  
+     boolean tryAdvance(Consumer<T> action);
+     default void forEachRemaining(Consumer<T> action);
+     Spliterator<T> trySplit();
+     long estimateSize();
+     int characteristics();
+  }
+
+- **tryAdvance** method is used to consume an element of the spliterator. This method returns either true indicating still more elements exist for processing otherwise false to signify all the elements of the spliterator is processed and can be exited.
 
 
-Conclusion
-----------
+- **forEachRemaining** is a default method available in Spliterator interface that indicates the spliterator to take certain action when no more splitting require. Basically this performs the given action for each remaining element, sequentially in the current thread, until all elements have been processed.
+
+  .. code:: java
+  
+    default void forEachRemaining(Consumer<T> action) {
+       do {
+	   
+       } while (tryAdvance(action));
+    }
+	
+  If you see the ``forEachRemaining`` method default implementation, it repeatedly calls the `tryAdvance` method to process the spliterator elements sequentially. While splitting task when a spliterator finds itself to be small enough that it can be executed sequentially then it calls `forEachRemaining` method on its elements.
+
+
+- **trySplit** is used to partition off some of its elements to second spliterator allowing both of them to process parallelly. The idea behind this splitting is to allow balanced parallel computation on a data structure. These spliterators repeatedly calls `trySplit` method unless spliterator returns null indiacating end of splitting process.
+
+
+- **estimateSize** returns an estimate of the number of elements available in spliterator. Usually this method is called by some forkjoin tasks like `AbstractTask` to check size before calling trySplit.
+
+
+- **characteristics** method reports a set of characteristics of its structure, source, and elements from among ORDERED, DISTINCT, SORTED, SIZED, NONNULL, IMMUTABLE, CONCURRENT, and SUBSIZED. These helps the Spliterator clients to control, specialize or simplify computation. For example, a Spliterator for a Collection would report SIZED, a Spliterator for a Set would report DISTINCT, and a Spliterator for a SortedSet would also report SORTED.
+
+You saw detailed descriptions on spliterator defined methods, now we will see a complete example that will deliver more context on how does they work.
+
+.. code-block:: java
+  :linenos:
+
+  public class SpliteratorTest {
+
+     public static void main(String[] args) {
+        Random random = new Random(100);
+        int[] array = IntStream.rangeClosed(1, 10000).map(random::nextInt)
+                               .map(i -> i * i + i).skip(20).toArray();
+        int max = StreamSupport.stream(new FindMaxSpliterator(array, 0, array.length - 1), true)
+                               .reduce(0, Integer::max, Integer::max);
+        System.out.println(max);
+     }
+
+     private static class FindMaxSpliterator implements Spliterator<Integer> {
+        int start, end;
+        int[] arr;
+
+        public FindMaxSpliterator(int[] arr, int start, int end) {
+            this.arr = arr;
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        public boolean tryAdvance(Consumer<? super Integer> action) {
+            if (start <= end) {
+                action.accept(arr[start]);
+                start++;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public Spliterator<Integer> trySplit() {
+            if (end - start < 100) {
+                return null;
+            }
+            int mid = (start + end) / 2;
+            int oldstart = start;
+            start = mid + 1;
+            return new FindMaxSpliterator(arr, oldstart, mid);
+        }
+
+        @Override
+        public long estimateSize() {
+            return end - start;
+        }
+
+        @Override
+        public int characteristics() {
+            return ORDERED | SIZED | IMMUTABLE | SUBSIZED;
+        }
+     }
+  }
+
