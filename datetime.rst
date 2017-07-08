@@ -45,7 +45,32 @@ If you run the above code multiple times then you will see unexpected behaviors.
 * Provide an effective API suitable for developer usability.
 * Provide a limited set of calendar systems and be extensible to others in future.
 
-Java 8 introduced a new package called `java.time <https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html>`_ to provide a high quality date and time support in the native Java API.
+Java 8 introduced a new package `java.time <https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html>`_ to provide a high quality date and time support in the native Java API.
+
+
+java.time package
+-----------------
+`java.time <https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html>`_ package contains classes to represent basic date-time concepts: instants, durations, dates, times, time-zones and periods based on ISO calendar system. All the classes are immutable and thread-safe. Following are package level descriptions.
+
+.. list-table::
+   :widths: 20 80
+   :header-rows: 1
+
+   * - Package
+     - Description
+
+   * - `java.time.temporal <https://docs.oracle.com/javase/8/docs/api/java/time/temporal/package-summary.html>`_
+     - Each date time instance is composed of fields. This package contains lower level access to those fields.
+
+   * - `java.time.format <https://docs.oracle.com/javase/8/docs/api/java/time/format/package-summary.html>`_
+     - Provides classes to print and parse dates and times. Instances are generally obtained from DateTimeFormatter, however DateTimeFormatterBuilder can be used if more power is needed.
+
+   * - `java.time.chrono <https://docs.oracle.com/javase/8/docs/api/java/time/chrono/package-summary.html>`_
+     - It contains the calendar neutral API ChronoLocalDate, ChronoLocalDateTime, ChronoZonedDateTime and Era. Actually the main API is build on ISO-8601 calendar system. However, there are other calendar systems: Hijrah Calendar, Japanese Calendar, Minguo Calendar, Thai Buddhist Calendar also exist for which this package provide support.
+	 
+   * - `java.time.zone <https://docs.oracle.com/javase/8/docs/api/java/time/zone/package-summary.html>`_
+     - This package provides support for time-zones, their rules and the resulting gaps and overlaps in the local time-line typically caused by Daylight Saving Time.
+
 
 Working with time zone
 ----------------------
