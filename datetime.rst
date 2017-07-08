@@ -59,10 +59,12 @@ java.time package
      - Description
 
    * - `java.time.temporal <https://docs.oracle.com/javase/8/docs/api/java/time/temporal/package-summary.html>`_
-     - Each date time instance is composed of fields. This package contains lower level access to those fields.
+     - Each date time instance is composed of fields. This package contains lower 
+	 level access to those fields.
 
    * - `java.time.format <https://docs.oracle.com/javase/8/docs/api/java/time/format/package-summary.html>`_
-     - Provides classes to print and parse dates and times. Instances are generally obtained from DateTimeFormatter, however DateTimeFormatterBuilder can be used if more power is needed.
+     - Provides classes to print and parse dates and times. Instances are generally 
+	 obtained from DateTimeFormatter, however DateTimeFormatterBuilder can be used if more power is needed.
 
    * - `java.time.chrono <https://docs.oracle.com/javase/8/docs/api/java/time/chrono/package-summary.html>`_
      - It contains the calendar neutral API ChronoLocalDate, ChronoLocalDateTime, ChronoZonedDateTime and Era. Actually the main API is build on ISO-8601 calendar system. However, there are other calendar systems: Hijrah Calendar, Japanese Calendar, Minguo Calendar, Thai Buddhist Calendar also exist for which this package provide support.
