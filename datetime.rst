@@ -53,7 +53,6 @@ java.time package
 `java.time <https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html>`_ package contains classes to represent basic date-time concepts: instants, durations, dates, times, time-zones and periods based on ISO calendar system. All the classes are immutable and thread-safe. Following are package level descriptions.
 
 .. list-table::
-   :widths: 20 80
    :header-rows: 1
 
    * - Package
