@@ -67,10 +67,14 @@ java.time package
 	 obtained from DateTimeFormatter, however DateTimeFormatterBuilder can be used if more power is needed.
 
    * - `java.time.chrono <https://docs.oracle.com/javase/8/docs/api/java/time/chrono/package-summary.html>`_
-     - It contains the calendar neutral API ChronoLocalDate, ChronoLocalDateTime, ChronoZonedDateTime and Era. Actually the main API is build on ISO-8601 calendar system. However, there are other calendar systems: Hijrah Calendar, Japanese Calendar, Minguo Calendar, Thai Buddhist Calendar also exist for which this package provide support.
+     - It contains the calendar neutral API ChronoLocalDate, ChronoLocalDateTime, 
+	 ChronoZonedDateTime and Era. Actually the main API is build on ISO-8601 calendar system. 
+	 However, there are other calendar systems: Hijrah Calendar, Japanese Calendar, 
+	 Minguo Calendar, Thai Buddhist Calendar also exist for which this package provide support.
 	 
    * - `java.time.zone <https://docs.oracle.com/javase/8/docs/api/java/time/zone/package-summary.html>`_
-     - This package provides support for time-zones, their rules and the resulting gaps and overlaps in the local time-line typically caused by Daylight Saving Time.
+     - This package provides support for time-zones, their rules and the resulting gaps 
+	 and overlaps in the local time-line typically caused by Daylight Saving Time.
 
 
 Working with time zone
