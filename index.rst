@@ -25,6 +25,7 @@ Contents:
    default
    forkjoin
    Parallel Processing <parallelization>
+   Date Time API <datetime>
 
 
 Indices and tables
