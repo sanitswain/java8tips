@@ -1,5 +1,5 @@
-Evolution of date time
-======================
+Evolution of date time API
+==========================
 Working with dates in Java was challenging tasks from the day one. Java 1.0 started with ``java.util.Date`` class to support date functionality but it had several problems and limitations. Despite its name, this class doesn't represent a date but a specific instant in time with millisecond precision. Its hazy design decision of using offsets: the year starts from 1900 and months are zero index based were misleading to the users. As an example if you want to represent March 18, 2014, we have to create instance of Date as follows.
 
 Date date = new Date(114, 2, 18);
@@ -10,6 +10,7 @@ To overcome all these limitations many of Date class methods were deprecated and
 
 * Constants were added in Calendar class but still month is zero index based.
 * Calendar class is mutable so thread safety is always a question for it.
+* It is very complicated to do date calculations. In fact, there is no simple, efficient way to calculate the days between two dates.
 * ``java.text.DateFormat`` were introduced for the purpose of parsing of date strings but it isn't thread-safe. Following example shows the serious problem can occure when DateFormat is used in multi thraded scenarios.
 
   .. code:: java
@@ -35,7 +36,16 @@ To overcome all these limitations many of Date class methods were deprecated and
     Fri Aug 15 00:00:00 IST 1947
     Fri Aug 15 00:00:00 IST 1947
 
-If you run the above code multiple time then you will see unexpcetd behaviors. Some of the third-party libraries, such as `Joda-Time` showed his interest to overcome issues with both Date and Calendar class and it become so popular that it won the attention of Java core team to include similar features to the Java core API.
+If you run the above code multiple times then you will see unexpected behaviors. The existing Java date and time classes are poor, mutable, and have unpredictable performance. Some of the third-party libraries, such as `Joda-Time` showed his interest to overcome the issues with both Date and Calendar classes and it become so popular that it won the attention of Java core development team to include similar features to the Java core API.
+
+`JSR 310 <https://jcp.org/en/jsr/detail?id=310>`_ defines the specifications for new Date and Time API to tackle the problem of a complete date and time model, including dates and times (with and without time zones), durations and time periods, intervals, formatting and parsing. Project `ThreeTen <http://www.threeten.org/>`_ was created to integrate it into `JDK 8 <http://openjdk.java.net/projects/jdk8/>`_. The goals of new Date Time API are:
+
+* Support standard time concepts including date, time, instant, and time-zone.
+* Immutable implementations for thread-safety.
+* Provide an effective API suitable for developer usability.
+* Provide a limited set of calendar systems and be extensible to others in future.
+
+Java 8 introduced a new package called `java.time <https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html>`_ to provide a high quality date and time support in the native Java API.
 
 Working with time zone
 ----------------------
