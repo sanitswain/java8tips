@@ -38,7 +38,7 @@ To overcome all these limitations many of Date class methods were deprecated and
 
 If you run the above code multiple times then you will see unexpected behaviors. The existing Java date and time classes are poor, mutable, and have unpredictable performance. Some of the third-party libraries, such as `Joda-Time` showed his interest to overcome the issues with both Date and Calendar classes and it become so popular that it won the attention of Java core development team to include similar features to the Java core API.
 
-`JSR 310 <https://jcp.org/en/jsr/detail?id=310>`_ defines the specifications for new Date and Time API to tackle the problem of a complete date and time model, including dates and times (with and without time zones), durations and time periods, intervals, formatting and parsing. Project `ThreeTen <http://www.threeten.org/>`_ was created to integrate it into `JDK 8 <http://openjdk.java.net/projects/jdk8/>`_. The goals of new Date Time API are:
+`JSR 310 <https://jcp.org/en/jsr/detail?id=310>`_ defines the specifications for new Date and Time API to tackle the problem of a complete date and time model, including dates and times (with and without time zones), durations and time periods, intervals, formatting and parsing. Project `ThreeTen <http://www.threeten.org/>`_ was created to integrate JSR 310 into `JDK 8 <http://openjdk.java.net/projects/jdk8/>`_. The goals of new Date Time API are:
 
 * Support standard time concepts including date, time, instant, and time-zone.
 * Immutable implementations for thread-safety.
@@ -50,7 +50,7 @@ Java 8 introduced a new package `java.time <https://docs.oracle.com/javase/8/doc
 
 java.time package
 -----------------
-`java.time <https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html>`_ package contains classes to represent basic date-time concepts: instants, durations, dates, times, time-zones and periods based on ISO calendar system. All the classes are immutable and thread-safe. Following are package level descriptions.
+`java.time <https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html>`_ package contains many classes to represent basic date-time concepts: instants, durations, dates, times, time-zones and periods based on ISO calendar system. All the classes are immutable and thread-safe. Following are nested packages available in java.time package.
 
 .. list-table::
    :header-rows: 1
@@ -59,24 +59,59 @@ java.time package
      - Description
 
    * - `java.time.temporal <https://docs.oracle.com/javase/8/docs/api/java/time/temporal/package-summary.html>`_
-     - Each date time instance is composed of fields. This package contains lower 
-	 level access to those fields.
+     - Each date time instance is composed of fields. This package contains lower level access to those fields.
 
    * - `java.time.format <https://docs.oracle.com/javase/8/docs/api/java/time/format/package-summary.html>`_
-     - Provides classes to print and parse dates and times. Instances are generally 
-	 obtained from DateTimeFormatter, however DateTimeFormatterBuilder can be used if more power is needed.
+     - Provides classes to print and parse dates and times. Instances are generally obtained from DateTimeFormatter, however DateTimeFormatterBuilder can be used if more power is needed.
 
    * - `java.time.chrono <https://docs.oracle.com/javase/8/docs/api/java/time/chrono/package-summary.html>`_
-     - It contains the calendar neutral API ChronoLocalDate, ChronoLocalDateTime, 
-	 ChronoZonedDateTime and Era. Actually the main API is build on ISO-8601 calendar system. 
-	 However, there are other calendar systems: Hijrah Calendar, Japanese Calendar, 
-	 Minguo Calendar, Thai Buddhist Calendar also exist for which this package provide support.
+     - This is intended for use by applications that need to use localized calendars. It contains the calendar neutral API ChronoLocalDate, ChronoLocalDateTime, ChronoZonedDateTime and Era. Actually the main API is build on ISO-8601 calendar system. However, there are other calendar systems: Hijrah Calendar, Japanese Calendar, Minguo Calendar, Thai Buddhist Calendar also exist for which this package provide support.
 	 
    * - `java.time.zone <https://docs.oracle.com/javase/8/docs/api/java/time/zone/package-summary.html>`_
-     - This package provides support for time-zones, their rules and the resulting gaps 
-	 and overlaps in the local time-line typically caused by Daylight Saving Time.
+     - This package provides support for time-zones, their rules and the resulting gaps and overlaps in the local time-line typically caused by Daylight Saving Time.
 
 
+	 
+Date Time classes
+-----------------
+Java 8 includes a large number of classes representing different aspects of dates like LocalDate, LocalTime, LocalDateTime, Instant, Duration and Period. These classes provides wide set of methods that will serve most of date time usecases. You will find many similar method prefixes to maintain the consistency and easy to remember. For example:
+
+- **of**: It is a static factory method to create instance using the required individual field values. 
+   Example: LocalDate.of(year, month, day)
+
+- **from**: Static factory method to create instance from another date-time aspect. It will throw ``DateTimeException`` if unable to create instance.
+   Example: LocalDate.from(LocalDateTime.now())
+
+- **to**: converts this object to another type
+   Example: LocalDateTime.toLocalDate(), Instant.toEpochMilli()
+   
+- **parse**: Static factory method to create instance from string.
+   Example: LocalDate.parse("2016-07-12")
+   
+- **get**: gets the value of something.
+   Example: Period.get(ChronoUnit.YEARS)
+   
+- **with**: the immutable equivalent of a setter.
+   Example: LocalDateTime.now().withYear(2016).withDayOfMonth(20);
+   
+- **plus**: adds an amount to an object
+   Example: duration.plusHours(5);
+   
+- **minus**: subtracts an amount from an object
+   Example: instant.minusMillis(50000)
+
+   
+
+TemporalAdjusters
+-----------------
+
+
+Date formatting	& parsing
+-------------------------
+	 
+
+
+	 
 Working with time zone
 ----------------------
 
