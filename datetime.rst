@@ -72,42 +72,126 @@ java.time package
 
 
 	 
-Date Time classes
+Common methods
 -----------------
 Java 8 includes a large number of classes representing different aspects of dates like LocalDate, LocalTime, LocalDateTime, Instant, Duration and Period. These classes provides wide set of methods that will serve most of date time usecases. You will find many similar method prefixes to maintain the consistency and easy to remember. For example:
 
-- **of**: It is a static factory method to create instance using the required individual field values. 
+- **of:** It is a static factory method to create instance using the required individual field values. 
    Example: LocalDate.of(year, month, day)
 
-- **from**: Static factory method to create instance from another date-time aspect. It will throw ``DateTimeException`` if unable to create instance.
+- **from:** Static factory method to create instance from another date-time aspect. It will throw ``DateTimeException`` if unable to create instance.
    Example: LocalDate.from(LocalDateTime.now())
 
-- **to**: converts this object to another type
+- **to:** converts this object to another type
    Example: LocalDateTime.toLocalDate(), Instant.toEpochMilli()
    
-- **parse**: Static factory method to create instance from string.
+- **parse:** Static factory method to create instance from string.
    Example: LocalDate.parse("2016-07-12")
    
-- **get**: gets the value of something.
+- **get:** gets the value of something.
    Example: Period.get(ChronoUnit.YEARS)
    
-- **with**: the immutable equivalent of a setter.
+- **with:** the immutable equivalent of a setter.
    Example: LocalDateTime.now().withYear(2016).withDayOfMonth(20);
    
-- **plus**: adds an amount to an object
+- **plus:** adds an amount to an object
    Example: duration.plusHours(5);
    
-- **minus**: subtracts an amount from an object
-   Example: instant.minusMillis(50000)
+- **minus:** subtracts an amount from an object
+   Example: localdate.minusDays(2), instant.minusMillis(1000)
+
+
+LoalDate, Time, Instant
+-----------------------
+Following diagram represents the class heirerchy for LocalDate, Time, Instant classes. `TemporalAccesssor` is the base interface defines the read-only access to a temporal object, such as a date, time, offset or some combination of these. `Temporal` interface defines the write access that will manipulate objects using plus and minus operations. We will gradually explore different temporal implementations individually.
+
+.. figure:: _static/temporal.png
+   :align: center
+   :width: 400px
+   :height: 200px
 
    
+**LocalDate**
+ LocalDate is an immutable object that represents a plain date with out time of day. It doesn't carry any information about the offset or time zone. It stores the date in YYYY-MM-DD format, for example '2014-03-18'. As I mentioned in the `Common methods <#common-methods>`_ section, LocalDate instance can be created in many ways.
+ 
+ .. code:: java
+   
+   LocalDate.of(2015, 03, 18);     -- When individual values know
+   LocalDate.parse("2015-03-18");  -- Creating from date string
+   
+   LocalDate.now();                -- To get the current date.
+   LocalDate.now(ZoneId.of("America/Chicago"));
+ 
+ It also provides additional methods to retrieve its field informations such as Day, Month, Year, Era etc as shown in below example.
+ 
+ .. code:: java
+   
+   1. LocalDate date = LocalDate.now();
+   2. date.getMonth();
+   3. date.getDayOfYear();
+   4. date.get(ChronoField.YEAR);
+
+ If you  see into line #4, it contains a generic ``get`` method that accepts `TemporalField` type and returns the field value. TemporalField is an interface and java 8 has ``ChronoField`` enum class to hold available temporal field types.
+
+|
+   
+**LocalTime**
+ Similar to LocalDate class, LocalTime represents only time of the day. It also doesn't hold time zone details. It stores the time in HH:mm:ss.nano_seconds format, for example '04:30:15.123456789'. This class also contain similar set of methods including accessing field values such as ``getHour``, ``getMinute``.
+
+ .. code:: java
+   
+   LocalTime.of(4, 30, 15);     
+   LocalTime.parse("04:30:15.12345");
+   
+   LocalTime.now();
+   LocalTime.now(ZoneId.of("America/Chicago"));
+   
+   date.getMinute();
+   date.getNano();
+   date.get(ChronoField.HOUR_OF_DAY);
+
+|   
+
+**LocalDateTime**
+ LocalDateTime is the combination of LocalDate and LocalTime that holds both date and time parts with out time zone details. The format of stored data is 2007-12-03T10:15:30 whete 'T' is the delimiter between date and time values. Most of the LocalDate and LocalTime methods are applicable to LocalDateTime class. It also contains methods to get LocalDate and LocalTime instances.
+
+ .. code:: java
+   
+   LocalDateTime.now();
+   LocalDateTime.getDayOfWeek();
+   LocalDateTime.parse("2007-12-03T10:15:30");
+   
+   date.toLocalDate();
+   date.toLocalTime();
+
+|
+
+**Instant**   
+ Instant is a point on a continuous time line or scale. Basically this represents the number of seconds passed since the Epoch time 1970-01-01T00:00:00Z. Internally Instant stores two values, one long value representing epoch-seconds and an int representing nanosecond-of-second, which will always be between 0 and 999,999,999. Any date-time after 1970-01-01T00:00:00Z will return positive value and before will be negative value.
+ 
+ .. code:: java
+   
+   1. Instant.now();
+   2. Instant.now().getEpochSecond();
+   
+   3. Instant.parse("1969-01-01T00:00:00.00Z").getEpochSecond();  --> -31,536,000
+   4. Instant.parse("1971-01-01T00:00:00.00Z").getEpochSecond();  --> 31,536,000
+
+ Here in line #3 we have supplied one year before epoch time so it is returning a negative long value (1*365*24*60*60 = 31,536,000 secs). Similarly in line #4, given date-time is next year of the epoch time so the result is a positive long value.
+ 
+
+Duration & Period
+-----------------
+
+
 
 TemporalAdjusters
 -----------------
 
 
-Date formatting	& parsing
--------------------------
+
+Formatting & parsing
+--------------------
 	 
 
 
