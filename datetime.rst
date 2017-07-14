@@ -133,7 +133,6 @@ Following diagram represents the class heirerchy for LocalDate, Time, Instant cl
 
  If you  see into line #4, it contains a generic ``get`` method that accepts `TemporalField` type and returns the field value. TemporalField is an interface and java 8 has ``ChronoField`` enum class to hold available temporal field types.
 
-|
    
 **LocalTime**
  Similar to LocalDate class, LocalTime represents only time of the day. It also doesn't hold time zone details. It stores the time in HH:mm:ss.nano_seconds format, for example '04:30:15.123456789'. This class also contain similar set of methods including accessing field values such as ``getHour``, ``getMinute``.
@@ -149,8 +148,7 @@ Following diagram represents the class heirerchy for LocalDate, Time, Instant cl
    date.getMinute();
    date.getNano();
    date.get(ChronoField.HOUR_OF_DAY);
-
-|   
+ 
 
 **LocalDateTime**
  LocalDateTime is the combination of LocalDate and LocalTime that holds both date and time parts with out time zone details. The format of stored data is 2007-12-03T10:15:30 whete 'T' is the delimiter between date and time values. Most of the LocalDate and LocalTime methods are applicable to LocalDateTime class. It also contains methods to get LocalDate and LocalTime instances.
@@ -164,7 +162,6 @@ Following diagram represents the class heirerchy for LocalDate, Time, Instant cl
    date.toLocalDate();
    date.toLocalTime();
 
-|
 
 **Instant**   
  Instant is a point on a continuous time line or scale. Basically this represents the number of seconds passed since the Epoch time 1970-01-01T00:00:00Z. Internally Instant stores two values, one long value representing epoch-seconds and an int representing nanosecond-of-second, which will always be between 0 and 999,999,999. Any date-time after 1970-01-01T00:00:00Z will return positive value and before will be negative value.
@@ -182,7 +179,44 @@ Following diagram represents the class heirerchy for LocalDate, Time, Instant cl
 
 Duration & Period
 -----------------
+In the previous section you saw, LocalDate, LocalTime used to work with date and time aspects. Beyond dates and times, the API also allows the storage of periods and durations of time. With the Date and Calendar class it is complicated to do date calculation like days between two dates so duration and period provide solutions for these kind of usecases.
 
+Both Duration and Period class implements ``TemporalAmount``. It is the base interface to represent amount of time. This is different from a date or time-of-day in that it is not tied with any point on time-line or scale, it is as simple as amount of time, such as "6 hours", "8 days" or "2 years and 3 months". As like TemporalField, Java API also provides ``TemporalUnit`` interface to measure time in units of years, months, days, hours, minutes and seconds. ``ChronoUnit`` is the enum that implements TemporalUnit interface which will be used by the end users.
+
+**Duration** holds quantity or amount of time in terms of seconds and nanoseconds. Along with these two, it provides some ``toXXX`` methods to access other fields: hours, minutes, millis, days. It also provides a highly used utility method ``between`` to calculate duration among two temporal objects.
+
+.. code-block:: java
+   :linenos:
+   
+   LocalDateTime d1 = LocalDateTime.parse("2014-12-03T10:15:30");
+   LocalDateTime d2 = LocalDateTime.parse("2016-03-05T23:15:00");
+   Duration duration = Duration.between(d1, d2);
+   duration.toHours();
+   duration.toDays();
+   
+   Duration.between(d1.toLocalTime(), d2).toHours();  -> 12
+   Duration.between(d1, d2.toLocalTime()).toHours();  -> DateTimeException
+   
+   Duration.between(d1.toLocalDate(), d2.toLocalDate());  -> DateTimeException
+
+If you have marked line #8 is throwing DateTimeException. The reason is when two different temporal objects are passed then the duration is calculated based on the first temporal object. Here the socond argument LocalTime tries to be coverted into LocalDateTime and the convertion failed. One another characteristic of between method is to accept temporal object that supports seconds or nanoseconds due to which line #10 will also throw DateTimeException.
+   
+**Period** represents amount of time in terms of years, months and days. It provides some ``getXXX`` methods to access these fields. Along with field accessing methods it also provides similar methods contained in Duration class.
+
+
+.. code:: java
+   
+   LocalDate date1 = LocalDate.parse("2010-01-15");
+   LocalDate date2 = LocalDate.parse("2011-03-18");
+
+   Period period = Period.between(date1, date2);
+   period.getYears();     -> 1
+   period.getMonths();    -> 2
+   period.getDays();      -> 3
+
+Important point to notice here is getMonths and getDays method doesn't return the number of months or days between these two dates, it is just the numeric value difference between two months and two days. If you want total number of days or months between these dates then use ``LocalDate.until(temporal, unit)``.
+
+Example: date1.until(date2, ChronoUnit.DAYS)
 
 
 TemporalAdjusters
