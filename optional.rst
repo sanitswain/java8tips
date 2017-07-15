@@ -1,3 +1,9 @@
+.. raw:: html
+
+    <embed>
+		<link rel="stylesheet" href="_static/mystyle.css">
+    </embed>
+
 Handling nulls with Optional
 ============================
 Tony Hoare-one of the giants of computer science once told, "`I call it my` **billion-dollar mistake**. `It was the invention of the null reference in 1965. I couldn't resist the temptation to put in a null reference, simply because it was so easy to implement.`" The null reference is the source of many problems because it is often used to denote the absence of a value. As a java developer you would have felt the pain of getting NullPointerException. Millions of projects are running using Java and guess the total amount of dollars spent on fixing those issues.
@@ -197,7 +203,7 @@ Retrieving from Optionals
 Optional provides following methods to retrive values from optional object.
 
 .. list-table::
-   :widths: 20 80
+   :widths: 25 75
    :header-rows: 1
 
    * - Method

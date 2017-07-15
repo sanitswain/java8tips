@@ -1,3 +1,9 @@
+.. raw:: html
+
+    <embed>
+		<link rel="stylesheet" href="_static/mystyle.css">
+    </embed>
+
 Functional Interfaces
 =====================
 In java 8 context, `functional interface` is an interface having exactly one abstract method called `functional method` to which the lambda expression's parameter and return types are matched. Functional interface provides target types for lambda expressions and method references.
