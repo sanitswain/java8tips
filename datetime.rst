@@ -1,3 +1,9 @@
+.. raw:: html
+
+    <embed>
+		<link rel="stylesheet" href="mystyle.css">
+    </embed>
+
 Evolution of date time API
 ==========================
 Working with dates in Java was challenging tasks from the day one. Java 1.0 started with ``java.util.Date`` class to support date functionality but it had several problems and limitations. Despite its name, this class doesn't represent a date but a specific instant in time with millisecond precision. Its hazy design decision of using offsets: the year starts from 1900 and months are zero index based were misleading to the users. As an example if you want to represent March 18, 2014, we have to create instance of Date as follows.
@@ -53,6 +59,7 @@ java.time package
 `java.time <https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html>`_ package contains many classes to represent basic date-time concepts: instants, durations, dates, times, time-zones and periods based on ISO calendar system. All the classes are immutable and thread-safe. Following are nested packages available in java.time package.
 
 .. list-table::
+   :widths: 20 80
    :header-rows: 1
 
    * - Package
@@ -243,7 +250,32 @@ Remember we can directly call ``adjuster.adjustInto(temporal)`` but is recommend
 
 Below table shows the API provided temporal adjuster implementations.
 
+.. list-table::
+   :widths: 25 75
+   :header-rows: 1
 
+   * - Method
+     - Description
+
+   * - dayOfWeekInMonth(int nth, DayOfWeek dayOfWeek)
+     - Returns a temporal instance of the given dayOfWeek that is the nth occurance in the month.
+       
+       LocalDate date = LocalDate.parse("2014-03-18");
+	   
+       // 4th monday in the same month of given date
+       date.with(TemporalAdjusters.dayOfWeekInMonth(4, DayOfWeek.MONDAY));  => 2014-03-24
+       
+       // 2nd Sunday in the same month
+       date.with(TemporalAdjusters.dayOfWeekInMonth(2, DayOfWeek.SUNDAY));  => 2014-03-09
+	   
+       // 8th Friday in the same month
+       date.with(TemporalAdjusters.dayOfWeekInMonth(8, DayOfWeek.FRIDAY));  => 2014-04-25
+
+   * - firstDayOfMonth()
+     - 
+
+   * - dayOfWeekInMonth(int ordinal, DayOfWeek dayOfWeek)
+     - 
 
 
 
