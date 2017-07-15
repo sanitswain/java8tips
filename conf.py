@@ -97,11 +97,11 @@ html_theme = 'default'
 html_static_path = ['_static']
 
 # css files. Currently it is added to wrap table cell text.
-html_context = {
-    'css_files': [
-        '_static/mystyle.css',  # override wide tables in RTD theme
-        ],
-     }
+#html_context = {
+#    'css_files': [
+#        '_static/mystyle.css',  # override wide tables in RTD theme
+#        ],
+#     }
 
 
 # -- Options for HTMLHelp output ------------------------------------------
