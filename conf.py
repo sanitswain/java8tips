@@ -96,6 +96,13 @@ html_theme = 'default'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+# css files. Currently it is added to wrap table cell text.
+html_context = {
+    'css_files': [
+        '_static/theme_overrides.css',  # override wide tables in RTD theme
+        ],
+     }
+
 
 # -- Options for HTMLHelp output ------------------------------------------
 

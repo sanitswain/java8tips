@@ -183,9 +183,10 @@ In the previous section you saw, LocalDate, LocalTime used to work with date and
 
 Both Duration and Period class implements ``TemporalAmount``. It is the base interface to represent amount of time. This is different from a date or time-of-day in that it is not tied with any point on time-line or scale, it is as simple as amount of time, such as "6 hours", "8 days" or "2 years and 3 months". As like TemporalField, Java API also provides ``TemporalUnit`` interface to measure time in units of years, months, days, hours, minutes and seconds. ``ChronoUnit`` is the enum that implements TemporalUnit interface which will be used by the end users.
 
-**Duration** holds quantity or amount of time in terms of seconds and nanoseconds. Along with these two, it provides some ``toXXX`` methods to access other fields: hours, minutes, millis, days. It also provides a highly used utility method ``between`` to calculate duration among two temporal objects.
+**Duration**
+ Duration holds quantity or amount of time in terms of seconds and nanoseconds. Along with these two, it provides some ``toXXX`` methods to access other fields: hours, minutes, millis, days. It also provides a highly used utility method ``between`` to calculate duration among two temporal objects.
 
-.. code-block:: java
+ .. code-block:: java
    :linenos:
    
    LocalDateTime d1 = LocalDateTime.parse("2014-12-03T10:15:30");
@@ -199,12 +200,13 @@ Both Duration and Period class implements ``TemporalAmount``. It is the base int
    
    Duration.between(d1.toLocalDate(), d2.toLocalDate());  -> DateTimeException
 
-If you have marked line #8 is throwing DateTimeException. The reason is when two different temporal objects are passed then the duration is calculated based on the first temporal object. Here the socond argument LocalTime tries to be coverted into LocalDateTime and the convertion failed. One another characteristic of between method is to accept temporal object that supports seconds or nanoseconds due to which line #10 will also throw DateTimeException.
+ If you have marked line #8 is throwing DateTimeException. The reason is when two different temporal objects are passed then the duration is calculated based on the first temporal object. Here the socond argument LocalTime tries to be coverted into LocalDateTime and the convertion failed. One another characteristic of between method is to accept temporal object that supports seconds or nanoseconds due to which line #10 will also throw DateTimeException.
    
-**Period** represents amount of time in terms of years, months and days. It provides some ``getXXX`` methods to access these fields. Along with field accessing methods it also provides similar methods contained in Duration class.
+**Period** 
+ Period represents amount of time in terms of years, months and days. It provides some ``getXXX`` methods to access these fields. Along with field accessing methods it also provides similar methods contained in Duration class.
 
 
-.. code:: java
+ .. code:: java
    
    LocalDate date1 = LocalDate.parse("2010-01-15");
    LocalDate date2 = LocalDate.parse("2011-03-18");
@@ -214,14 +216,40 @@ If you have marked line #8 is throwing DateTimeException. The reason is when two
    period.getMonths();    -> 2
    period.getDays();      -> 3
 
-Important point to notice here is getMonths and getDays method doesn't return the number of months or days between these two dates, it is just the numeric value difference between two months and two days. If you want total number of days or months between these dates then use ``LocalDate.until(temporal, unit)``.
+ Important point to notice here is getMonths and getDays method doesn't return the number of months or days between these two dates, it is just the numeric value difference between two months and two days. If you want total number of days or months between these dates then use ``LocalDate.until(temporal, unit)``.
 
-Example: date1.until(date2, ChronoUnit.DAYS)
+ Example: date1.until(date2, ChronoUnit.DAYS)
 
 
 TemporalAdjusters
 -----------------
+New Date Time API provides numerous methods: plusHour, minusWeek, withYear, withDays to manipulate temporal objects. Sometime we need to perform advanced operations such as finding next working day for a software firm considering its holiday calendar. One solution is to write temporal object modification logic wherever require in your code but this will cause code repeatation. To help with these scenarios Java 8 provides an interface ``TemporalAdjuster`` to externalize temporal adjustment logic. It has only one abstract method ``Temporal adjustInto(Temporal)`` that takes an existing temporal object and returns a manipulated temporal. Java recommends not to alter the original input temporal object for the thread safety.
 
+The framework interface `Temporal` defines an overloaded version of ``with(TemporalAdjuster)``  method that takes `TemporalAdjuster` as input and returns a new temporal object.
+
+.. code:: java
+
+  default Temporal with(TemporalAdjuster adjuster) {
+      return adjuster.adjustInto(this);
+  }
+  
+Remember we can directly call ``adjuster.adjustInto(temporal)`` but is recommended by Java core development team to use the first approach for the sake of maintaining code readability. Java 8 also provides a utility class ``TemporalAdjusters`` that defines most of common adjustment implementations. Suppose to find out the next sunday after the java 8 release date.
+
+.. code:: java
+
+  LocalDate date = LocalDate.parse("2014-03-18");
+  TemporalAdjuster adjuster = TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY);
+  System.out.println(date.with(adjuster));
+
+Below table shows the API provided temporal adjuster implementations.
+
+
+
+
+
+
+
+  
 
 
 Formatting & parsing
