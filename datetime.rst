@@ -1,7 +1,7 @@
 .. raw:: html
 
     <embed>
-		<link rel="stylesheet" href="mystyle.css">
+		<link rel="stylesheet" href="_static/mystyle.css">
     </embed>
 
 Evolution of date time API
