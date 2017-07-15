@@ -83,29 +83,49 @@ Common methods
 -----------------
 Java 8 includes a large number of classes representing different aspects of dates like LocalDate, LocalTime, LocalDateTime, Instant, Duration and Period. These classes provides wide set of methods that will serve most of date time usecases. You will find many similar method prefixes to maintain the consistency and easy to remember. For example:
 
-- **of:** It is a static factory method to create instance using the required individual field values. 
-   Example: LocalDate.of(year, month, day)
+.. list-table::
+   :widths: 15 45 40
+   :header-rows: 1
 
-- **from:** Static factory method to create instance from another date-time aspect. It will throw ``DateTimeException`` if unable to create instance.
-   Example: LocalDate.from(LocalDateTime.now())
+   * - Method
+     - Description
+     - Example
+	 
+   * - of
+     - It is a static factory method to create instance using the required individual field values.
+     - LocalDate.of(year, month, day)
 
-- **to:** converts this object to another type
-   Example: LocalDateTime.toLocalDate(), Instant.toEpochMilli()
-   
-- **parse:** Static factory method to create instance from string.
-   Example: LocalDate.parse("2016-07-12")
-   
-- **get:** gets the value of something.
-   Example: Period.get(ChronoUnit.YEARS)
-   
-- **with:** the immutable equivalent of a setter.
-   Example: LocalDateTime.now().withYear(2016).withDayOfMonth(20);
-   
-- **plus:** adds an amount to an object
-   Example: duration.plusHours(5);
-   
-- **minus:** subtracts an amount from an object
-   Example: localdate.minusDays(2), instant.minusMillis(1000)
+   * - from
+     - Static factory method to create instance from another date-time aspect. It will throw ``DateTimeException`` if unable to create instance.
+     - LocalDate.from(LocalDateTime.now())
+
+   * - to
+     - converts this object to another type
+     - LocalDateTime.toLocalDate()
+       Instant.toEpochMilli()
+
+   * - parse
+     - Static factory method to create instance from string.
+     - LocalDate.parse("2016-07-12")
+	 
+   * - get
+     - gets the value of something.
+     - Period.get(ChronoUnit.YEARS)
+	 
+   * - with
+     - the immutable equivalent of a setter.
+     - LocalDateTime.now()
+          .withYear(2016)
+          .withDayOfMonth(20);
+	 
+   * - plus
+     - adds an amount to an object
+     - duration.plusHours(5);
+	 
+   * - minus
+     - subtracts an amount from an object
+     - localdate.minusDays(2)
+	   instant.minusMillis(1000)
 
 
 LoalDate, Time, Instant
@@ -255,33 +275,115 @@ Below table shows the API provided temporal adjuster implementations.
    :header-rows: 1
 
    * - Method
-     - Description
+     - Description & Example
 
-   * - dayOfWeekInMonth(int nth, DayOfWeek dayOfWeek)
-     - Returns a temporal instance of the given dayOfWeek that is the nth occurance in the month.
+   * - dayOfWeekInMonth
+     - Returns an adjuster representing temporal instance of the given dayOfWeek that is the nth occurance in the month.
        
        LocalDate date = LocalDate.parse("2014-03-18");
 	   
-       // 4th monday in the same month of given date
-       date.with(TemporalAdjusters.dayOfWeekInMonth(4, DayOfWeek.MONDAY));  => 2014-03-24
+       // 4th monday in the month (2014-03-24)
+       date.with(dayOfWeekInMonth(4, DayOfWeek.MONDAY));
        
-       // 2nd Sunday in the same month
-       date.with(TemporalAdjusters.dayOfWeekInMonth(2, DayOfWeek.SUNDAY));  => 2014-03-09
+       // 2nd Sunday in the month (2014-03-09)
+       date.with(dayOfWeekInMonth(2, DayOfWeek.SUNDAY));
 	   
-       // 8th Friday in the same month
-       date.with(TemporalAdjusters.dayOfWeekInMonth(8, DayOfWeek.FRIDAY));  => 2014-04-25
+       // 8th Friday in the month (2014-04-25)
+       date.with(dayOfWeekInMonth(8, DayOfWeek.FRIDAY));
+	   
+       We know that it is not possible to have 8th Friday in any of the month, so here next subsequent months will also be considered.
 
-   * - firstDayOfMonth()
-     - 
+   * - firstDayOfMonth
+     - Returns the adjuster that in turn returns temporal object representing first day of the month.
+	 
+       LocalDate date = LocalDate.parse("2014-12-03");
+       date.with(firstDayOfMonth());  => 2014-12-01
 
-   * - dayOfWeekInMonth(int ordinal, DayOfWeek dayOfWeek)
-     - 
+   * - firstDayOfNextMonth
+     - Returns the adjuster that in turn returns temporal object representing first day of the next month.
 
+       LocalDate date = LocalDate.parse("2014-12-03");
+       date.with(firstDayOfNextMonth());  => 2015-01-01
 
+   * - firstDayOfNextYear
+     - Adjuster to return temporal object representing first day of the next year.
 
+       LocalDate date = LocalDate.parse("2014-08-03");
+       date.with(firstDayOfNextYear())  => 2015-01-01
 
+   * - firstDayOfYear
+     - Adjuster to return temporal object representing first day of the given date year.
 
-  
+       LocalDate date = LocalDate.parse("2014-08-03");
+       date.with(firstDayOfYear())  => 2014-01-01
+
+   * - firstInMonth
+     - Adjuster to return temporal object representing first occurance of given day in the month.
+
+       LocalDate date = LocalDate.parse("2014-08-03");
+       date.with(firstInMonth(DayOfWeek.MONDAY))  => 2014-08-04
+	   
+   * - lastDayOfMonth
+     - Returns the adjuster that in turn returns temporal object representing last day of the month.
+
+       LocalDate date = LocalDate.parse("2014-08-03");
+       date.with(lastDayOfMonth())  => 2014-08-31
+	   
+   * - lastDayOfYear
+     - Adjuster to return temporal object representing last day of the given date year.
+
+       LocalDate date = LocalDate.parse("2014-08-03");
+       date.with(lastDayOfYear())  => 2014-12-31
+	   
+   * - lastInMonth
+     - Adjuster to return temporal object representing last occurance of given day in the month.
+
+       LocalDate date = LocalDate.parse("2014-08-03");
+       date.with(lastInMonth(DayOfWeek.MONDAY))  => 2014-08-25
+
+   * - next
+     - Adjuster to return next occurance of given day.
+
+       LocalDate date = LocalDate.parse("2014-08-03");
+       date.with(next(DayOfWeek.FRIDAY))  => 2014-08-08
+
+   * - nextOrSame
+     - Returns the next-or-same day-of-week adjuster, which adjusts the date to the first occurrence of the specified day-of-week after the date being adjusted unless it is already on that day in which case the same object is returned.
+
+       LocalDate date = LocalDate.parse("2014-08-03");
+       date.with(lastInMonth(DayOfWeek.SUNDAY))  => 2014-08-03
+
+	   "2014-08-03" is a SUNDAY, so returned the same date.
+	   
+   * - previous
+     - Adjuster to return previous occurance of given day.
+
+       LocalDate date = LocalDate.parse("2014-08-03");
+       date.with(previous(DayOfWeek.MONDAY))  => 2014-07-28
+	   
+   * - previousOrSame
+     - Same as previous method but considers current given date also.
+
+       LocalDate date = LocalDate.parse("2014-08-03");
+       date.with(previousOrSame(DayOfWeek.SUNDAY))  => 2014-08-25
+
+Apart from above methods, TemporalAdjusters also contains a generic method ``ofDateAdjuster(UnaryOperator<LocalDate> adjuster)`` to hold the custom logic. User can pass a lambda by wrapping their own date manipulation logic. Below example shows a custom TemporalAdjuster implementation for finding next working day.
+
+.. code-block:: java
+   :linenos:
+
+    TemporalAdjuster workingday = temporal -> {
+      LocalDate date = (LocalDate) temporal;
+      DayOfWeek day = date.getDayOfWeek();
+      if (DayOfWeek.FRIDAY.equals(day) || DayOfWeek.SATURDAY.equals(day)) {
+          return date.with(next(DayOfWeek.MONDAY));
+      } else {
+          return date.plusDays(1);
+      }
+    };
+
+    System.out.println(LocalDate.now().with(workingday));
+
 
 
 Formatting & parsing
