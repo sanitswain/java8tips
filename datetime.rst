@@ -17,7 +17,7 @@ To overcome all these limitations many of Date class methods were deprecated and
 * Constants were added in Calendar class but still month is zero index based.
 * Calendar class is mutable so thread safety is always a question for it.
 * It is very complicated to do date calculations. In fact, there is no simple, efficient way to calculate the days between two dates.
-* ``java.text.DateFormat`` were introduced for the purpose of parsing of date strings but it isn't thread-safe. Following example shows the serious problem can occure when DateFormat is used in multi thraded scenarios.
+* ``java.text.DateFormat`` were introduced for the purpose of parsing of date strings but it isn't thread-safe. Following example shows the serious problem can occure when DateFormat is used in multi threaded scenarios.
 
   .. code:: java
 
@@ -125,7 +125,7 @@ Java 8 includes a large number of classes representing different aspects of date
    * - minus
      - subtracts an amount from an object
      - localdate.minusDays(2)
-	   instant.minusMillis(1000)
+       instant.minusMillis(1000)
 
 
 LoalDate, Time, Instant
@@ -268,7 +268,7 @@ Remember we can directly call ``adjuster.adjustInto(temporal)`` but is recommend
   TemporalAdjuster adjuster = TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY);
   System.out.println(date.with(adjuster));
 
-Below table shows the API provided temporal adjuster implementations.
+Below table shows the API provided temporal adjusters. For all these adjusters we will use ``LocalDate.parse("2014-03-18")`` for demonstrating examples.
 
 .. list-table::
    :widths: 25 75
@@ -279,8 +279,6 @@ Below table shows the API provided temporal adjuster implementations.
 
    * - dayOfWeekInMonth
      - Returns an adjuster representing temporal instance of the given dayOfWeek that is the nth occurance in the month.
-       
-       LocalDate date = LocalDate.parse("2014-03-18");
 	   
        // 4th monday in the month (2014-03-24)
        date.with(dayOfWeekInMonth(4, DayOfWeek.MONDAY));
@@ -291,13 +289,12 @@ Below table shows the API provided temporal adjuster implementations.
        // 8th Friday in the month (2014-04-25)
        date.with(dayOfWeekInMonth(8, DayOfWeek.FRIDAY));
 	   
-       We know that it is not possible to have 8th Friday in any of the month, so here next subsequent months will also be considered.
+       It is not possible to have 8th Friday in any of the month, so here next subsequent months will also be considered.
 
    * - firstDayOfMonth
      - Returns the adjuster that in turn returns temporal object representing first day of the month.
 	 
-       LocalDate date = LocalDate.parse("2014-12-03");
-       date.with(firstDayOfMonth());  => 2014-12-01
+       date.with(firstDayOfMonth());  => 2014-03-01
 
    * - firstDayOfNextMonth
      - Returns the adjuster that in turn returns temporal object representing first day of the next month.
@@ -308,63 +305,53 @@ Below table shows the API provided temporal adjuster implementations.
    * - firstDayOfNextYear
      - Adjuster to return temporal object representing first day of the next year.
 
-       LocalDate date = LocalDate.parse("2014-08-03");
        date.with(firstDayOfNextYear())  => 2015-01-01
 
    * - firstDayOfYear
      - Adjuster to return temporal object representing first day of the given date year.
 
-       LocalDate date = LocalDate.parse("2014-08-03");
        date.with(firstDayOfYear())  => 2014-01-01
 
    * - firstInMonth
      - Adjuster to return temporal object representing first occurance of given day in the month.
 
-       LocalDate date = LocalDate.parse("2014-08-03");
        date.with(firstInMonth(DayOfWeek.MONDAY))  => 2014-08-04
 	   
    * - lastDayOfMonth
      - Returns the adjuster that in turn returns temporal object representing last day of the month.
 
-       LocalDate date = LocalDate.parse("2014-08-03");
        date.with(lastDayOfMonth())  => 2014-08-31
 	   
    * - lastDayOfYear
      - Adjuster to return temporal object representing last day of the given date year.
 
-       LocalDate date = LocalDate.parse("2014-08-03");
        date.with(lastDayOfYear())  => 2014-12-31
 	   
    * - lastInMonth
      - Adjuster to return temporal object representing last occurance of given day in the month.
 
-       LocalDate date = LocalDate.parse("2014-08-03");
        date.with(lastInMonth(DayOfWeek.MONDAY))  => 2014-08-25
 
    * - next
      - Adjuster to return next occurance of given day.
 
-       LocalDate date = LocalDate.parse("2014-08-03");
        date.with(next(DayOfWeek.FRIDAY))  => 2014-08-08
 
    * - nextOrSame
      - Returns the next-or-same day-of-week adjuster, which adjusts the date to the first occurrence of the specified day-of-week after the date being adjusted unless it is already on that day in which case the same object is returned.
 
-       LocalDate date = LocalDate.parse("2014-08-03");
        date.with(lastInMonth(DayOfWeek.SUNDAY))  => 2014-08-03
 
-	   "2014-08-03" is a SUNDAY, so returned the same date.
+       "2014-08-03" is a SUNDAY, so returned the same date.
 	   
    * - previous
      - Adjuster to return previous occurance of given day.
 
-       LocalDate date = LocalDate.parse("2014-08-03");
        date.with(previous(DayOfWeek.MONDAY))  => 2014-07-28
 	   
    * - previousOrSame
      - Same as previous method but considers current given date also.
 
-       LocalDate date = LocalDate.parse("2014-08-03");
        date.with(previousOrSame(DayOfWeek.SUNDAY))  => 2014-08-25
 
 Apart from above methods, TemporalAdjusters also contains a generic method ``ofDateAdjuster(UnaryOperator<LocalDate> adjuster)`` to hold the custom logic. User can pass a lambda by wrapping their own date manipulation logic. Below example shows a custom TemporalAdjuster implementation for finding next working day.
@@ -372,24 +359,51 @@ Apart from above methods, TemporalAdjusters also contains a generic method ``ofD
 .. code-block:: java
    :linenos:
 
-    TemporalAdjuster workingday = temporal -> {
-      LocalDate date = (LocalDate) temporal;
-      DayOfWeek day = date.getDayOfWeek();
-      if (DayOfWeek.FRIDAY.equals(day) || DayOfWeek.SATURDAY.equals(day)) {
-          return date.with(next(DayOfWeek.MONDAY));
-      } else {
-          return date.plusDays(1);
-      }
+    TemporalAdjuster nextWorkingday = temporal -> {
+        LocalDate date = (LocalDate) temporal;
+        DayOfWeek day = date.getDayOfWeek();
+        if (DayOfWeek.FRIDAY.equals(day) || DayOfWeek.SATURDAY.equals(day)) {
+            return date.with(next(DayOfWeek.MONDAY));
+        } else {
+            return date.plusDays(1);
+        }
     };
 
-    System.out.println(LocalDate.now().with(workingday));
-
+    System.out.println(LocalDate.now().with(nextWorkingday));
 
 
 Formatting & parsing
 --------------------
-	 
+Formatting and parsing are must required features of date time API that does the convertion between string and date. In the begining we saw one of the major issue with the old DateFormat class is the thread safety. The Date Time API has introduced a new package `java.time` to support parsing and formatting with new thread safe date time classes. This package has two basic classes `DateTimeFormatter <https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html>`_ and `DateTimeFormatterBuilder <https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatterBuilder.html>`_ where most of the time we will be using DateTimeFormatter class.
 
+**DateTimeFormatter:**
+This class is the replacement for java.text.DateFormat which provides two main methods; format(temporal) to convert temporal object to string and parse(string) to create a temporal object from the given date string. Creating DateTimeFormatter instance is easy, it provides overloaded ``ofPatttern`` methods to create it instances.
+
+.. code:: java
+
+  DateTimeFormatter f1 = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+  LocalDate date = f1.parse("18-Mar-2014");
+  f1.format(LocalDate.of(2014, 3, 18));  =>  18-Mar-2014
+  
+  //For localization
+  DateTimeFormatter f2 = DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.FRENCH);
+  f2.format(LocalDate.of(2014, 3, 18));  =>  18-mars-2014
+
+DateTimeFormatter class also contains many of its own instances like ISO_LOCAL_DATE, ISO_LOCAL_DATE_TIME, BASIC_ISO_DATE etc that can be used for our general usecases. 
+
+
+**DateTimeFormatterBuilder:**
+This class is used to create DateTimeFormatters. If you hook into DateTimeFormatter source code you will see ultimately they are created using the builder class. This class will be rarely used in case of complex needs so we will not focus much on this. Below code snippet taken from the java source code to show the implementation of ISO_LOCAL_DATE instance.
+
+.. code:: java
+
+  ISO_LOCAL_DATE = new DateTimeFormatterBuilder()
+                .appendValue(YEAR, 4, 10, SignStyle.EXCEEDS_PAD)
+                .appendLiteral('-')
+                .appendValue(MONTH_OF_YEAR, 2)
+                .appendLiteral('-')
+                .appendValue(DAY_OF_MONTH, 2)
+                .toFormatter(ResolverStyle.STRICT, IsoChronology.INSTANCE);
 
 	 
 Working with time zone
