@@ -42,7 +42,7 @@ Comparator interface contains some of static methods that returns another compar
 - **comparing(Function<T,U> keyExtractor)**
     This method uses the given key extracting function that applies on T type elements to generate U type comparable sort keys. To compare two elements of type T, it first applies the key extracting function to both the elements and then performs the sorting operation on the resulted keys.
 
-.. code:: java
+  .. code:: java
 
         // Sorting words based on word lengths
         Function<String, Integer> keyExtractor = str -> str.length();
@@ -50,15 +50,15 @@ Comparator interface contains some of static methods that returns another compar
             .sorted(Comparator.comparing(keyExtractor))
             .forEach(System.out::println);
 
-In the above code snippet a ``Function<String, Integer> keyExtractor`` object is passed to the ``comparing`` method that in turn will return a `Comparator` object. It first applied the function to string elements and generated string lengths then returned a comparator definition as given below.
+  In the above code snippet a ``Function<String, Integer> keyExtractor`` object is passed to the ``comparing`` method that in turn will return a `Comparator` object. It first applied the function to string elements and generated string lengths then returned a comparator definition as given below.
 
-``Comparator<Integer> comp = (str1, str2) -> keyExtractor.apply(str1).compareTo(keyExtractor.apply(str2))``
- 
-			
+  ``Comparator<Integer> c = (s1, s2) -> keyExtractor.apply(s1).compareTo(keyExtractor.apply(s2))``
+
+
 - **comparing(Function<T,U> keyExtractor, Comparator<U> keyComparator)**
     In the first ``comparing`` method, key extracting function returns sorting keys of ``Comparable`` type so it doesn't need additional Comparator object to perform sorting. But in this ``comparing`` function it first uses the key extracting function to generate key and then performs sorting based on the given comparator.
 
-.. code:: java
+  .. code:: java
 
     Stream.of("grapes", "milk", "pineapple", "water-melon")
         .sorted(Comparator.comparing(String::length, Comparator.reverseOrder()))
@@ -68,7 +68,7 @@ In the above code snippet a ``Function<String, Integer> keyExtractor`` object is
 - **comparingXXX(ToXXXFunction<T> keyExtractor)**
     Comparator interface provides three primitive comparing functions: `comparingInt, comparingDouble and comparingLong` to sort the elements based on the primitive keys. It accepts ToXXXFunction functional interface which returns primitive values that avoid unnecessary boxing-unboxing costs while doing sorting.
 
-.. code:: java
+  .. code:: java
 
    // Natural order sorting by ignoring the sign.
    Stream.of(-10, 31, 16, -5, 2)
@@ -79,7 +79,7 @@ In the above code snippet a ``Function<String, Integer> keyExtractor`` object is
 - **thenComparing(Comparator<T> other)**
     It is very much possible that two elements will be equal according to the given comparator. In such cases the other comprator decides the sorting order. Below code snippet shows example of sorting employee objects based on employee's salary and then uses name if two salaries are equal.
 
-.. code:: 
+  .. code:: 
 
     List<Employee> employees = Application.getEmployees();
     employees.stream()

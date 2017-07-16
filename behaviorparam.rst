@@ -6,7 +6,8 @@ If you have come across some of the behavioral design patterns like *Strategy Pa
 
 Suppose a company XYZ is trying to group its employees based on certain criterias like proficiency level, technology type, gender etc or new criterias can be added in future. So to solve this problem we will create family of grouping algorithms as described below.
 
-.. code:: java
+.. code-block:: java
+   :linenos:
 
     interface Groupable {
         public String findGroup(Employee e);

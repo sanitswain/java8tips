@@ -4,7 +4,8 @@ In previous chapter we thought of removing ``GroupByExperience`` class, only the
 
 .. code:: java
 
-	(Employee e) -> { return e.yearsOfExpr >= 7 ? "Expert" : e.yearsOfExpr >= 3 ? "Intermediet" : "Fresher"; }
+	(Employee e) -> { return e.yearsOfExpr >= 7 ? 
+                        "Expert" : e.yearsOfExpr >= 3 ? "Intermediet" : "Fresher"; }
 
 Basically *Lambda* has 3 parts.
 
@@ -24,9 +25,13 @@ With applying above rules our ``GroupByExperience`` class can be writtten in fol
 
 .. code:: java
 
-	e -> { return e.yearsOfExpr >= 7 ? "Expert" : e.yearsOfExpr >= 3 ? "Intermediet" : "Fresher"; }
+	e -> { return e.yearsOfExpr >= 7 ? 
+                "Expert" : e.yearsOfExpr >= 3 ? 
+                         "Intermediet" : "Fresher"; }
 	
-	e -> e.yearsOfExpr >= 7 ? "Expert" : e.yearsOfExpr >= 3 ? "Intermediet" : "Fresher"
+	e -> e.yearsOfExpr >= 7 ? 
+                "Expert" : e.yearsOfExpr >= 3 ? 
+                        "Intermediet" : "Fresher"
 
 |
 |
