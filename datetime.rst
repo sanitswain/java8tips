@@ -498,7 +498,7 @@ One of the confusing aspects of date time is working with time zones. Till Java 
    ZonedDateTime z32 = ZonedDateTime.ofInstant(instant, zone);
 
 **OffsetDateTime**
- As we saw time zones are also represented by an offset value from UTC, OffsetDateTime represents an object with date/time information and an offset, for example, 2014-12-03T11:30-06:00. Instant, OffsetDateTime and ZonedDateTime are very much looks similar but there are key differences exists. Instance represents a point in time in UTC on a continuous time line, OffsetDateTime maintains time zone with an offset compared to UTC and ZonedDateTime contains time zone information along with Day-Light-saving rules. It is always promoted to use ZonedDateTime or Instant for simple usages. As like other temporal instances, this also has standard method patterns to create its instances.
+ As we saw time zones are also represented by an offset value from UTC, OffsetDateTime represents an object with date/time information and an offset, for example, 2014-12-03T11:30-06:00. Instant, OffsetDateTime and ZonedDateTime are very much looks similar but there are key differences exists. Instance represents a point in time in UTC on a continuous time line, OffsetDateTime maintains time zone with an offset compared to UTC and ZonedDateTime contains time zone information along with Day-Light-saving rules. It is always better to use ZonedDateTime or Instant for simple usages. As like other temporal instances, this also has standard method patterns to create its instances.
  
  .. code:: java
  
@@ -509,4 +509,4 @@ One of the confusing aspects of date time is working with time zones. Till Java 
    OffsetDateTime.of(LocalDate.now(), LocalTime.now(), offset);
    OffsetDateTime.ofInstant(Instant.now(), offset);
 
- Similar to OffsetDateTime, Java 8 provides an OffsetTime class that contains time with an offset from UTC/Greenwich, such as 10:15:30+01:00.
+ Similar to OffsetDateTime, Java 8 also provides an OffsetTime class that contains time with an offset from UTC/Greenwich, such as 10:15:30+01:00.
