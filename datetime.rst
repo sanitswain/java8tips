@@ -406,13 +406,107 @@ This class is used to create DateTimeFormatters. If you hook into DateTimeFormat
                 .toFormatter(ResolverStyle.STRICT, IsoChronology.INSTANCE);
 
 	 
-Working with time zone
-----------------------
+Working with time zones
+-----------------------
+One of the confusing aspects of date time is working with time zones. Till Java 7 java.util.TimeZone can be used togather with Calendar class but JDK 8 now introduced quite few classes to simplify the usage and gives better options.
 
+.. list-table::
+   :widths: 25 75
+   :header-rows: 1
 
+   * - Class
+     - Description
 
+   * - ZoneID
+     - Defines a unique id for a region and city combination. For example Asia/Kolkata
 
+   * - ZoneOffset
+     - Represents timezone with an offset from Greenwich/UTC, such as +05:30.
 
+   * - ZonedDateTime
+     - Represents a date time in the ISO-8601 calendar system with time zone such as 2007-12-03T10:15:30+01:00 Europe/Paris
+	 
+   * - OffsetDateTime
+     - A date-time with an offset from UTC/Greenwich in the ISO-8601 calendar system, such as 2007-12-03T10:15:30+01:00.
 
-Non ISO calendars
-------------------
+   * - OffsetTime
+     - A time with an offset from UTC/Greenwich in the ISO-8601 calendar system, such as 10:15:30+01:00.
+	 
+   * - ZoneRulesProvider
+     - Provides time zone rules.
+
+**Time zones and Offsets:**
+
+ Java uses the Internet Assigned Numbers Authority (IANA) public domain database of time zones, which keeps a record of all known time zones around the world and is updated periodically to reflect changes made by political bodies to time zone boundaries, UTC offsets, and daylight-saving rules. You can find a nice video on DayLight Saving `here <http://www.daylight-savings-time.info/>`_. java.time.ZoneId represents a time zone with a unique id identified by continent or ocean and then by the name of the location, which is typically the largest city within the region. For example, America/New_York represents most of the US eastern time zone.
+
+ There are basically three types of zone ids.
+
+ - The first type is the offset from UTC/GMT time. They are represented by the class ZoneOffset and they consist of digits starting with + or -, for example, +05:30 giving hints that perticular time zone is 5:30 hours ahead of GMT.
+
+ - The next type ids are also offsets but they started with some recognised prefixes: 'UTC', 'GMT' and 'UT'. Same with first one they also represented by ZoneOffset class.
+
+ - The third type is region based. These are in the format area/city, for example, Asia/Kolkata.
+ 
+ You can create a ZoneId instance using ``ZoneId.of(String zoneId)`` factory method. Usually this returns its subclass instance ZoneOffset or ZoneRegion depending upon the input given. ZoneOffset class has factory method that can directly create its instance from the offset value.
+ 
+ .. code:: java
+ 
+  ZoneId zone = ZoneId.of("Asia/Kolkata");
+  ZoneOffset zone2 = ZoneOffset.of("+05:30");
+  
+ ZoneId consists of ZoneRules that defines rules for that time zoneIt is not recommended to use ZoneOffset as they don't contain daylight saving details if a country or city supporting it. ZoneId class also provides a method ``ZoneId.getAvailableZoneIds()`` that returns all available time zones. These time zones are usually supplied by ZoneRulesProvider class. You can register your own time zones by registering a custom provider.
+ 
+ .. code:: java
+ 
+   public class MyZoneRulesProvider extends ZoneRulesProvider {
+
+      @Override
+      protected Set<String> provideZoneIds() {
+          Set<String> set = new HashSet<>();
+          set.add("India/Delhi");
+          set.add("India/Mumbai");
+          set.add("India/Chennai");
+          return set;
+      }
+
+      public static void main(String[] args) {
+          ZoneRulesProvider.registerProvider(new MyZoneRulesProvider());
+          ZoneId.getAvailableZoneIds().stream().forEach(System.out::println);
+      }
+   }
+   
+ Each ZoneId consists of ZoneRules that defines rules for that time zone. `ZoneId.getRules()` will returns the rules.
+ 
+**ZonedDateTime:**
+ As like LocalDateTime, ZonedDateTime stores date and time fields, but additionally contains time zone information. You can combine ZoneId with temporal objects to transform it into ZonedDateTime or can use overloaded ``of`` methods to create its instance.
+ 
+ .. code-block:: java
+   :linenos:
+ 
+   ZoneId zone = ZoneId.of("Asia/Kolkata");
+
+   LocalDateTime dateTime = LocalDateTime.parse("2014-12-03T10:15:30");
+   ZonedDateTime z11 = dateTime.atZone(zone);
+   ZonedDateTime z12 = ZonedDateTime.of(dateTime, zone);
+
+   LocalDate date = LocalDate.of(2014, 3, 18);
+   ZonedDateTime z21 = date.atStartOfDay(zone);
+   ZonedDateTime z22 = ZonedDateTime.of(date, LocalTime.now(), zone);
+
+   Instant instant = Instant.now();
+   ZonedDateTime z31 = instant.atZone(zone);
+   ZonedDateTime z32 = ZonedDateTime.ofInstant(instant, zone);
+
+**OffsetDateTime**
+ As we saw time zones are also represented by an offset value from UTC, OffsetDateTime represents an object with date/time information and an offset, for example, 2014-12-03T11:30-06:00. Instant, OffsetDateTime and ZonedDateTime are very much looks similar but there are key differences exists. Instance represents a point in time in UTC on a continuous time line, OffsetDateTime maintains time zone with an offset compared to UTC and ZonedDateTime contains time zone information along with Day-Light-saving rules. It is always promoted to use ZonedDateTime or Instant for simple usages. As like other temporal instances, this also has standard method patterns to create its instances.
+ 
+ .. code:: java
+ 
+   ZoneOffset offset = ZoneOffset.of("-2");
+
+   OffsetDateTime.now(offset);
+   OffsetDateTime.of(LocalDateTime.now(), offset);
+   OffsetDateTime.of(LocalDate.now(), LocalTime.now(), offset);
+   OffsetDateTime.ofInstant(Instant.now(), offset);
+
+ Similar to OffsetDateTime, Java 8 provides an OffsetTime class that contains time with an offset from UTC/Greenwich, such as 10:15:30+01:00.
