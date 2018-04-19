@@ -6,7 +6,7 @@ In the begining of the tutorial we said- parallelization is almost free, with a 
 - Process all sub tasks independently
 - Join the partial results from each sub task
 
-ForkJoinPool internally does all these steps for you. We will typically submit a single task to ForkJoinPool and awaits its completion. The ForkJoinPool and the task itself work togather to divide and conquer the problem. Any problems that can be recursively divided can be a candidature for Fork-Join.
+ForkJoinPool internally does all these steps for you. We will typically submit a single task to ForkJoinPool and awaits its completion. The ForkJoinPool and the task itself work togather to divide and conquer the problem. Any problems that can be recursively divided and executed independently can be a candidature for Fork-Join.
 
 
 ForkJoinPool creation
@@ -23,7 +23,7 @@ ForkJoinTask
 ------------
 As like Callable and Runnable in ThreadPoolExecutor, fork-join accepts a type of ``ForkJoinTask`` instance for the execution. The abstract base class ForkJoinTask is an implementation of ``java.util.concurrecnt.Future`` that provides common functionalities to its subclasses. It again offers two more abstract subclasses: `RecursiveAction` and `RecursiveTask` which has only one abstract method called "compute()". There is no difference between these two classes except ``RecursiveTask`` can return result where as ``RecursiveAction`` can not. You can assume RecursiveTask is an example of finding largest number from an array where as RecursiveAction is to sort an array which doesn't require to return any result.
 
-ForkJoinTask has large set of methods but the methods we will be using most of the time are: **fork(), compute(), join()**. The compute method will contain the original task to be performed by the worker threads. The following is the pseudo code of the compute method.
+ForkJoinTask has large set of methods but the methods we will be using most of the time are: **fork(), compute(), join()**. The compute method will contain the original computational logic to be performed by the worker threads. The following is the pseudo code of the compute method.
 
 ::
 
@@ -39,7 +39,7 @@ ForkJoinTask has large set of methods but the methods we will be using most of t
       first.join();
   }
 
-The idea behind the fork-join is to divide the task into multiple smaller chunks and execute them independently. The compute method is responsible to split the task if it is not small enough to execute. In the pseudo code we have split the task into two but it can be split into more also. When you call `fork` on the first task it will be pushed into the queue and may be executed by some other thread, then you call compute method on second. After the competion of second task we will call join on the first task to wait for its completion. We will quickly see a complete example which demonstrates finding the largest element in an array.
+The idea behind the fork-join is to divide the task into multiple smaller chunks and execute them independently. The compute method is responsible to split the task if it is not small enough to execute. In the pseudo code we have split the task into two but it can be split into more also. When you call `fork` on the first task it will be pushed into the queue and may be executed by some other thread, then you call compute method on second. After the competion of second task we will call join on the first task to wait for its completion. Below is the complete example which demonstrates finding the largest element in an array.
 
 .. code-block:: java
   :linenos:
@@ -95,7 +95,7 @@ Here rather than calling `fork, compute` and `join` separately, we used ``invoke
 
 How fork-join works?
 --------------------
-ForkJoinPool has array of DEqueues (WorkerQueue) which will be shared by all the worker threads. You can assume it is a single shared task queue that is usually used in normal ExecutorServices. Each DEQueue is belongs to one worker thread who will be the owner for that queue. Every time ``fork`` is called on a task will be pushed into its own queue. Each thread repeatedly removes a task from its own DEQueue and runs it. DEQueue support three functions: `push`, `pop` and `poll` where push and pop methods will be called by owner thread only and poll will be called by other threads. If a thread discovers its queue is empty then it becomes a theaf: it chooses a victive thread at random and calls that queue's poll method to steal a task for itself. This process is called `work stealing`.
+ForkJoinPool has array of DEqueues (WorkerQueue) which will be shared by all the worker threads. You can assume it is a single shared task queue that is usually used in normal ExecutorServices. Each DEQueue is belongs to one worker thread who will be the owner for that queue. Every time ``fork`` is called on a task will be pushed into its own queue. Each thread repeatedly removes a task from its own DEQueue and runs it. DEQueue support three functions: `push`, `pop` and `poll` where push and pop methods will be called by owner thread only and poll will be called by other threads. If any time a thread discovers its queue is empty then it becomes a theaf: it chooses a victim thread at random and calls that queue's poll method to steal a task for itself. This process is called `work stealing`.
 
 .. figure:: _static/forkjoin_1.png
    :align: center
@@ -104,7 +104,7 @@ ForkJoinPool has array of DEqueues (WorkerQueue) which will be shared by all the
    
    **Internals of ForkJoinPool**
 
-Initially , only a single thread in a ForkJoinPool will be busy when you submit a task. The thread will begin to subdivide the larger task into smaller tasks. Each time a task is divided into two or more tasks, we fork the every new subtask except the last one we compute. After the computation we invoke join to wait for the forked tasks to complete. This divide-and-conquer process continues untill all the tasks are executed, and all the queues become empty. Mote generally this work stealing algorithm is used to redistribute and balance the tasks among the worker threads in the pool. Below figure shows how this process occurs.
+Initially , only a single thread in a ForkJoinPool will be busy when you submit a task. The thread will begin to subdivide the larger task into smaller tasks. Each time a task is divided into two or more tasks, we fork the every new subtask except the last one we compute. After the computation we invoke join to wait for the forked tasks to complete. This divide-and-conquer process continues untill all the tasks are executed, and all the queues become empty. More generally this work stealing algorithm is used to redistribute and balance the tasks among the worker threads in the pool. Below figure shows how this process occurs.
 
 .. figure:: _static/forkjoin_2.png
    :align: center

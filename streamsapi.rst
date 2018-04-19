@@ -128,7 +128,7 @@ Stream API provides ``anyMatch``, ``allMatch`` and ``noneMatch`` short-circuitin
 
 Finding element
 ---------------
-Stream interface has ``findAny`` method which returns an arbitrary element from the stream. The behaviour of this operation is nondeterministic; it is free to select any element in the stream because in case of parallelization stream source will be divided into multiple chunks where any element can be returned. It has ``findFirst`` method also which returns the first element of the stream.
+Stream interface has ``findAny`` method which returns an arbitrary element from the stream. The behaviour of this operation is nondeterministic; it is free to select any element in the stream because in case of parallelization stream source will be divided into multiple chunks where any element can be returned. It also has ``findFirst`` method that returns the first element of the stream.
 
 :Signature: Optional<T> findFirst()
 
@@ -144,7 +144,7 @@ If you see the signature of above two methods, they return an Optional object wh
 
 Stream Reduction
 ----------------
-Stream interface supports overloaded reduction operations that contineously combines elements of the stream until reduced to single output value.
+Stream interface supports overloaded reduction operations that continuously combines elements of the stream until reduced to single output value.
 
 Suppose I asked you to calculate sum of array of numbers, then if i am not wrong your answer would be something like below.
 
@@ -156,7 +156,7 @@ Suppose I asked you to calculate sum of array of numbers, then if i am not wrong
         result += num;
     }
 
-Now, I changed my requirement to calculate multiplication of elements of the array. So you will update your code to ``result=0`` and then ``result *= num``. So if you notice here all the time you will have an initialization logic, an iteration and an operation on the two elements, only your intialized value and the operation varies. 
+Now, I changed my requirement to calculate multiplication of elements of the array. So you will update your code to ``result=1`` and then ``result *= num``. So if you notice here all the time you will have an initialization logic, an iteration and an operation on the two elements, only your intial value and the operation varies. 
 
 To generalize these kind of tasks Stream API has provided overloaded ``reduce`` methods that does the same operation what we saw. If we re-write above codes then they will be 
 
@@ -185,7 +185,7 @@ To generalize these kind of tasks Stream API has provided overloaded ``reduce`` 
    
 
 - **U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner)**
-  In first two reduction operations your stream element type and return type were same means before using the reduce method you should convert your elements of type T to type U. But there is an 3 arguments reduce method which facilitates to pass elements of any type. So here `accumulator` accepts previous partial calculated result and element of type T and return type U result. Below example shows the usage of all three reduction operations.
+  In first two reduction operations your stream element type and return type were same means before using the reduce method you should convert your elements to type T from any other type. But there is an 3 arguments reduce method which facilitates to pass elements of any type. So here `accumulator` accepts previous partial calculated result and element of type T and return type U result. Below example shows the usage of all three reduction operations.
 
   .. code:: java
 
@@ -269,7 +269,7 @@ Stream interface supports two overloaded ``toArray`` methods that will collect s
 	                                 OR
 	
                      employees.stream().filter(e -> e.getGender() == MALE)
-                           .toArray(len -> new Employee[]);
+                           .toArray(len -> new Employee[len]);
 
 
 

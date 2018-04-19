@@ -74,7 +74,7 @@ But in JDK 1.7 right hand side generic type become optional by changing it to th
 	2. List<String> list = new ArrayList<>();
 	   list.addAll(Arrays.asList());
 
-If you compile above code in JDK 1.7, then the statement-1 will be compiled successfully but not statement-2 and it will generate ``The method addAll(Collection<? extends String>) in the type List<String> is not applicable for the arguments (List<Object>)`` error message. So what really happened in statement-2 where as both of the statements looks similar. Just look into the signature of above used methods.
+If you compile above code in JDK 1.7, then the statement-1 will be compiled successfully but not statement-2 and it will generate ``The method addAll(Collection<? extends String>) in the type List<String> is not applicable for the arguments (List<Object>)`` error message. So what really happened in statement-2 where as both of the statements looks similar. Just look into the signatures of these methods.
 
 +---------------------------------------------------+ 
 |     Method Signatures                             | 
@@ -92,13 +92,13 @@ The type of lambda is deduced from the context where it is used. If we take our 
 
     For run() method fully described lambda expression is
     () -> {
-        I love Lambdas".length();
+        "I love Lambdas".length();
     }
 
 	
     and for call() it is
     () -> {
-        return I love Lambdas".length();
+        return "I love Lambdas".length();
     }
 
 Java compiler always looks for a matching functional interface to associate with the lambda expression from it's surrounding context or target type. Compiler expects you to use lambda expresssion in following places such that it can determine the target type.
@@ -108,7 +108,7 @@ Java compiler always looks for a matching functional interface to associate with
 	- Return statements
 	- Method or constructor arguments
 	- Lambda expression bodies
-	- Ternary expressions, ?: etc
+	- Ternary expressions (?:) etc
 
 For method or constructor arguments, the compiler determines the target type with two other language features: `overload resolution` and `type argument inference`. Look into the below code snippet.
 
@@ -135,7 +135,11 @@ For method or constructor arguments, the compiler determines the target type wit
 	
     Output: Executing Callable...
 
-Here we have two overloaded methods: Runnable and Callable. When you call the execute method with the mentioned lambda, the ``execute(Callable)`` will be called because call() method can return something. Now just uncomment `execute(PrivilegedAction)` method and try to reexecute and this time you will get compilation error: `The method execute(Callable<String>) is ambiguous for the type Lambdas`. The reason is both the last two execute() methods are capable to return and compiler found the ambiguous methods. So to resolve this you have to explicitly type cast the lambda expression as below.
+Here we have two overloaded methods: Runnable and Callable. When you call the execute method with the mentioned lambda, the ``execute(Callable)`` will be called because the lambda ``() -> "done"`` says `I am not accepting any argument but I will be returning` *done* and Callable.call() method can return something.
+
+.. note:: Don't be confused with why Runnable is not called. In lambda ``() -> "done"``, "done" is a return statement not any assignment statement so that Void will be returned. Suppose lambda exxpression would be ``() -> {String s = "done";}`` then it must have called Runnable.
+
+Now just uncomment `execute(PrivilegedAction)` method and try to reexecute and this time you will get compilation error: `The method execute(Callable<String>) is ambiguous for the type Lambdas`. The reason is both the last two execute() methods are capable to return and compiler found the ambiguous methods. So to resolve this you have to explicitly type cast the lambda expression as below.
 
 	`execute((Callable<String>) (() -> "done"));`
 
@@ -196,15 +200,15 @@ Lambda has some restrictions:
         }
     }
 
-Local variables stored in the stack where as instance variables stored in heap. In the above code snippet main thread declares variable "x" and also creates a Thread which is trying to use this x variable. As we know local variables will be stored in the local stack (here stack of main) and when thread "tt" will be created it will executed separate to main thread. There might be chances that main will be completed first and the stack will be released before thread tt trying to use it. So if variable is declared final, them lambda will a copy of it and use whenever require.
+Local variables stored in the stack where as instance variables stored in heap. In the above code snippet main thread declares variable "x" and also creates a Thread which is trying to use this x variable. As we know local variables will be stored in the local stack (here stack of main) and when thread "tt" will be created it will executed separate to main thread. There might be chances that main will be completed first and the stack will be released before thread tt trying to use it. So if variable is declared final, them lambda will take a copy of it and use whenever require.
 
 Where to use Lambdas
 ^^^^^^^^^^^^^^^^^^^^
 We have discussed enough on lambdas and anonybmous classes. Let's discuss the scenarios where should we use them.
 
-	- **Anonymous class:** Use it whenever you want to declare some additional fields or methods which lambda cann't do.
+	- **Anonymous class:** Use it whenever you want to declare some additional fields (member variables) or methods which lambda cann't do.
 	
 	- **Lambda:** 
 		* Use it if you want to encapsulate a single unit of behavior and pass to some other code. For example: performing certain operation on each element of collection.
 		
-		* Use it if you need a simple instance of a functional interface and none of the preceding criteria apply (for example, you do not need a constructor, a named type, fields, or additional methods).
+		* Use it if you need a simple instance of a functional interface where you do not need a constructor, a named type, fields, or additional methods.

@@ -5,7 +5,7 @@ Compare to earlier days, cost of the hardwares have been reduced and the number 
 
 Parallel Streams
 ----------------
-A `parallel` Stream is a stream that splits its elements into multiple chunks, process each chunk with different thread. Thus you can automatically partition the workload of a given operation on all the cores of your multicore processor and keep all of them equally busy. Getting parallel stream is very easy, calling ``parallelStream()`` method on collection classes or ``parallel()`` method on sequential stream returns a parallel stream as demonstrated below.
+A `parallel` Stream is a stream that splits its elements into multiple chunks, process each chunk with different thread. Thus you can automatically partition the workload of a given operation on all the cores of your multicore processor and keep all of them equally busy. Getting parallel stream is very easy, just calling ``parallelStream()`` method on collection classes or ``parallel()`` method on sequential stream returns a parallel stream as demonstrated below.
 
 ::
 
@@ -33,7 +33,7 @@ By now you already have idea that tasks are divided and processed individually i
     int max = numbers.parallelStream().reduce(0, Integer::max, Integer::max);
     System.out.println("Parallel: " + max);
 
-Here to the reduce method we are passing a BiFunction (2nd argument) which denominates the task to be performed when the task become too small and can be executed without splitting again. The last argument is a BinaryOperator shows the action should taken on the two partial results collected from sub tasks. If you want to know about `Stream.reduce` method please refer the `Stream <streamsapi.html#stream-reduction>`__ chapter. Below is the call stack of parallelStream() method.
+Here to the reduce method we are passing a BiFunction (2nd argument) which represents the task to be performed when the task become too small and can be executed without splitting again. The last argument is a BinaryOperator shows the action should taken on the two partial results collected from sub tasks. If you want to know about `Stream.reduce` method please refer the `Stream <streamsapi.html#stream-reduction>`__ chapter. Below is the call stack of parallelStream() method.
 
 |
 |     parallelStream()
@@ -72,7 +72,7 @@ Spliterator is the new interface introduced in jdk8 that traverses and partition
        } while (tryAdvance(action));
     }
 	
-  If you see the ``forEachRemaining`` method default implementation, it repeatedly calls the `tryAdvance` method to process the spliterator elements sequentially. While splitting task when a spliterator finds itself to be small enough that it can be executed sequentially then it calls `forEachRemaining` method on its elements.
+  If you see the ``forEachRemaining`` method default implementation, it repeatedly calls the `tryAdvance` method to process the spliterator elements sequentially. While splitting task when a spliterator finds itself to be small enough that can be executed sequentially then it calls `forEachRemaining` method on its elements.
 
 
 - **trySplit** is used to partition off some of its elements to second spliterator allowing both of them to process parallelly. The idea behind this splitting is to allow balanced parallel computation on a data structure. These spliterators repeatedly calls `trySplit` method unless spliterator returns null indiacating end of splitting process.

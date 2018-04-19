@@ -59,7 +59,7 @@ No doubt that code will run without any issues but it still has following proble
 - Repeated low levels codes such as ``if`` conditions.
 - Maintainability will be difficult as nesting levels goes on.
 
-Java8 has introduced ``java.util.Optional`` singleton class to deal with such problems and additionally provides some utility methods that can be used in certain common scnearios. `Optional` is a container or a wrapper class that represents value might or might not exist for a variable. When value present you can use ``get`` method to fetch the value or on absent it just behaves as an empty container. We get exception when we directly operate on the null instances so Optional promotes to use its utility methods to perform operations. With keeping things in mind we can reimplement the original 'Candidate' model class given below.
+Java8 has introduced ``java.util.Optional`` class to deal with such problems and additionally provides some utility methods that can be used in certain common scnearios. `Optional` is a container or a wrapper class that represents value might or might not exist for a variable. When value present you can use ``get`` method to fetch the value or on absent it just behaves as an empty container. We get exception when we directly operate on the null instances so Optional promotes to use its utility methods to perform operations. With keeping things in mind we can reimplement the original 'Candidate' model class given below.
 
 .. code:: java
 
@@ -101,6 +101,7 @@ Creating optional objects are damn easy, it provides following factory methods t
 
  ``Optional<Job> optJob = Optional.empty();``
 
+ .. note:: Optional.empty() always returns a singleton Optional instance so equility check will always derive true.
  
 - **Optional from nullable value:**
  

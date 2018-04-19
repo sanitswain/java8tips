@@ -1,6 +1,6 @@
 Default and Static methods
 ==========================
-Prior to java8 interfaces were containing only abstract methods but this time you will be able to provide concrete implementations inside interface. Usually interfaces are contracts that defines the set of operations to be supported for a usecase and all of its implementing classes should provide implementations to those abstract methods. When there is a need to provide some basic common functionalities to all implementating classes, the general approach was taken to introduce an abstract class which was inherited by them rather than directly implementing interface. Just to take an example think about Servlet case.
+Prior to java8 interfaces were containing only abstract methods but this time you will be able to provide concrete implementations inside interface. Usually interfaces are contracts that defines the set of operations to be supported for a usecase and all of its implementing classes should provide implementations to those abstract methods. When there is a need to provide some basic common functionalities to all implementating classes, the usual approach is to introduce an abstract class which is inherited by all implementating classes rather than directly implementing interface. Just to take an example think about Servlet case.
 
 .. figure:: _static/servlet.png
    :width: 300px
@@ -55,7 +55,7 @@ The stream method is required in all List and Set implementations so added in th
   
 Multiple inheritance
 --------------------
-You might have heard of the diamond problem in C++ where a class can inherit two methods of the same signature from two different classes. This is the reason that java adopted multiple inheritance from very begining. But introducing default methods it again opened the gate for the same issue. A class is able to implement multiple interfaces even if they contain abstract method with the same name.
+You might have heard of the diamond problem in C++ where a class can inherit two methods of the same signature from two different classes. This is the reason that java always avoided multile inheritance and adopted multilevel inheritance from very begining. But introducing default methods it again opened the gate for the same issue. A class is able to implement multiple interfaces even if they contain abstract method with the same name.
 
 .. code:: java
 
@@ -85,7 +85,7 @@ You might have heard of the diamond problem in C++ where a class can inherit two
 
 This was possible because the method is called on a single interface reference and both the interfaces are not interfering each other, they are just contracts. But now though interfaces can contain concrete methods, there is the possibility of a class inheriting more than one method with the same signature. Java 8 acknowledges this conflict with three basic principles.
 
-1. A method declaration in the class or a superclass wins the priority over any default method declared in the interface.
+1. A method declaration in same class or a superclass wins the priority over any default method declared in the interface.
 
   .. code:: java
     
@@ -110,7 +110,7 @@ This was possible because the method is called on a single interface reference a
 	
     Output: MyClass
 
-  Here `print` method is ingerited by both MyClass and interface A, but MyClass print method has taken into consideration.
+  Here `print` method is inherited by both MyClass and interface A, but MyClass print method has taken into consideration.
 
   
 2. The method with the same signature in the most specific default-providing interface will take the priority. 
@@ -141,7 +141,7 @@ This was possible because the method is called on a single interface reference a
   Here `print` method is inherited by both interfaces but interface A extending B so B will be consider most specific or closer and will be considered.
 
 
-3. In case choices are still ambiguous, the class inheriting from multiple interfaces has to override the default method and then it can provide its own implementation or can inherit any one. To call the super interface method ``super`` keyward is used.
+3. In case choices are still ambiguous, the class inheriting from multiple interfaces has to override the default method and then it can provide its own implementation or can explicitely call any inherit one. To call the super interface method ``super`` keyward is used.
 
   .. code:: java
   
@@ -175,6 +175,6 @@ This was possible because the method is called on a single interface reference a
   
 Static methods
 --------------
-In addition to default methods, you can define static methods in interfaces. (A static method is a method that is associated with the class in which it is defined rather than with any object. Every instance of the class shares its static methods.) This makes it easier for you to organize helper methods in your libraries; you can keep static methods specific to an interface in the same interface rather than in a separate class.
+In addition to default methods, you can also define static methods in interfaces. (A static method is a method that is associated with the class in which it is defined rather than with any object. Every instance of the class shares its static methods.) This makes it easier for you to organize helper methods in your libraries; you can keep static methods specific to an interface in the same interface rather than in a separate class.
 
 Like static methods in classes, you specify that a method definition in an interface is a static method with the static keyword at the beginning of the method signature. All method declarations in an interface, including static methods, are implicitly public, so you can omit the public modifier. Through out the tutorial you have seen lot of example of interface static method like ``Stream.of``, ``Comparator.naturalOrder``, ``Comparator.comparing`` etc.

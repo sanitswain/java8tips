@@ -6,13 +6,13 @@
 
 Evolution of date time API
 ==========================
-Working with dates in Java was challenging tasks from the day one. Java 1.0 started with ``java.util.Date`` class to support date functionality but it had several problems and limitations. Despite its name, this class doesn't represent a date but a specific instant in time with millisecond precision. Its hazy design decision of using offsets: the year starts from 1900 and months are zero index based were misleading to the users. As an example if you want to represent March 18, 2014, we have to create instance of Date as follows.
+Working with dates in Java was always challenging from day one. Java 1.0 shiped with ``java.util.Date`` class to support date functionality but it had several problems and limitations. Despite its name, this class doesn't represent a date but a specific instant in time with millisecond precision. Its hazy design decision of using offsets: the year starts from 1900 and months are zero index based were misleading to the users. As an example if you want to represent March 18, 2014, we have to create instance of Date as follows.
 
 Date date = new Date(114, 2, 18);
 
 Here in the year field we have to pass year as 114 (2014-1900) and 2 as 3rd month which are quite confusing. Date had some of getXXX, setXXX methods to interpret dates as year, month, day, hour, minute, and second values and a ``Date(String)`` for parsing of date strings. Unfortunately, the API for these functions were not easy for internationalization. Another problem could be the arguments given to the Date API methods don't fall within any specific ranges; for example, a date may be specified as January 32 and is interpreted as meaning February 1. There is no explicit control over it.
 
-To overcome all these limitations many of Date class methods were deprecated and ``java.util.Calendar`` class was introduced in Java 1.1, but it still couldn't meet the expectations. It solved some of Date class issues; internally handling offset values: passing 2014 as year rather than passing 114, daling with localization etc, but it has introduced some other problems. Calendar has similar problems and design flaws given below that lead to the error prone code.
+To overcome all these limitations many of Date class methods were deprecated and ``java.util.Calendar`` class was introduced in Java 1.1, but it still couldn't meet the expectations. It solved some of Date class issues; internally handling offset values: passing 2014 as year rather than passing 114, dealing with localization etc, but it has introduced some other problems. Calendar has similar problems and design flaws given below that lead to the error prone code.
 
 * Constants were added in Calendar class but still month is zero index based.
 * Calendar class is mutable so thread safety is always a question for it.
@@ -42,7 +42,7 @@ To overcome all these limitations many of Date class methods were deprecated and
     Fri Aug 15 00:00:00 IST 1947
     Fri Aug 15 00:00:00 IST 1947
 
-If you run the above code multiple times then you will see unexpected behaviors. The existing Java date and time classes are poor, mutable, and have unpredictable performance. Some of the third-party libraries, such as `Joda-Time` showed his interest to overcome the issues with both Date and Calendar classes and it become so popular that it won the attention of Java core development team to include similar features to the Java core API.
+If you run the above code multiple times then you will see unexpected behaviors. The existing Java date and time classes are poor, mutable, and have unpredictable performance. Some of the third-party libraries, such as `Joda-Time` showed his interest to overcome the issues with both Date and Calendar classes and it became so popular that Java core development team decided to include similar features to the Java core API itself.
 
 `JSR 310 <https://jcp.org/en/jsr/detail?id=310>`_ defines the specifications for new Date and Time API to tackle the problem of a complete date and time model, including dates and times (with and without time zones), durations and time periods, intervals, formatting and parsing. Project `ThreeTen <http://www.threeten.org/>`_ was created to integrate JSR 310 into `JDK 8 <http://openjdk.java.net/projects/jdk8/>`_. The goals of new Date Time API are:
 
@@ -51,7 +51,7 @@ If you run the above code multiple times then you will see unexpected behaviors.
 * Provide an effective API suitable for developer usability.
 * Provide a limited set of calendar systems and be extensible to others in future.
 
-Java 8 introduced a new package `java.time <https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html>`_ to provide a high quality date and time support in the native Java API.
+Java 8 introduced a new package `java.time <https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html>`_ to provide a high quality date and time to support in the native Java API.
 
 
 java.time package
@@ -158,7 +158,7 @@ Following diagram represents the class heirerchy for LocalDate, Time, Instant cl
    3. date.getDayOfYear();
    4. date.get(ChronoField.YEAR);
 
- If you  see into line #4, it contains a generic ``get`` method that accepts `TemporalField` type and returns the field value. TemporalField is an interface and java 8 has ``ChronoField`` enum class to hold available temporal field types.
+ If you  see into line #4, it contains a generic ``get`` method that accepts `TemporalField` type and returns the field value. TemporalField is an interface and ``ChronoField`` enum class implementing it which defines all possible temporal field types.
 
    
 **LocalTime**
@@ -223,8 +223,11 @@ Both Duration and Period class implements ``TemporalAmount``. It is the base int
    duration.toDays();
    
    Duration.between(d1.toLocalTime(), d2).toHours();  -> 12
+   
+   //line #8
    Duration.between(d1, d2.toLocalTime()).toHours();  -> DateTimeException
    
+   //line #10
    Duration.between(d1.toLocalDate(), d2.toLocalDate());  -> DateTimeException
 
  If you have marked line #8 is throwing DateTimeException. The reason is when two different temporal objects are passed then the duration is calculated based on the first temporal object. Here the socond argument LocalTime tries to be coverted into LocalDateTime and the convertion failed. One another characteristic of between method is to accept temporal object that supports seconds or nanoseconds due to which line #10 will also throw DateTimeException.
@@ -250,7 +253,7 @@ Both Duration and Period class implements ``TemporalAmount``. It is the base int
 
 TemporalAdjusters
 -----------------
-New Date Time API provides numerous methods: plusHour, minusWeek, withYear, withDays to manipulate temporal objects. Sometime we need to perform advanced operations such as finding next working day for a software firm considering its holiday calendar. One solution is to write temporal object modification logic wherever require in your code but this will cause code repeatation. To help with these scenarios Java 8 provides an interface ``TemporalAdjuster`` to externalize temporal adjustment logic. It has only one abstract method ``Temporal adjustInto(Temporal)`` that takes an existing temporal object and returns a manipulated temporal. Java recommends not to alter the original input temporal object for the thread safety.
+New Date Time API provides numerous methods: plusHour, minusWeek, withYear, withDays and many more to manipulate temporal objects. Sometime we need to perform advanced operations such as finding next working day for a software firm considering its holiday calendar. One solution is to write temporal object manipulation logic wherever require in your code but this will lead you to code repeatation. To help with these scenarios Java 8 provides an interface ``TemporalAdjuster`` to externalize temporal adjustment logic. It has only one abstract method ``Temporal adjustInto(Temporal)`` that takes an existing temporal object and returns a manipulated temporal. Java recommends not to alter the original input temporal object for the thread safety.
 
 The framework interface `Temporal` defines an overloaded version of ``with(TemporalAdjuster)``  method that takes `TemporalAdjuster` as input and returns a new temporal object.
 
@@ -260,7 +263,7 @@ The framework interface `Temporal` defines an overloaded version of ``with(Tempo
       return adjuster.adjustInto(this);
   }
   
-Remember we can directly call ``adjuster.adjustInto(temporal)`` but is recommended by Java core development team to use the first approach for the sake of maintaining code readability. Java 8 also provides a utility class ``TemporalAdjusters`` that defines most of common adjustment implementations. Suppose to find out the next sunday after the java 8 release date.
+Remember we can directly call ``adjuster.adjustInto(temporal)`` but is recommended by Java core development team to use first approach for the sake of maintaining code readability. Java 8 also provides a utility class ``TemporalAdjusters`` that defines most of common adjustment implementations. Suppose to find out the next sunday after the java 8 release date.
 
 .. code:: java
 
@@ -374,7 +377,7 @@ Apart from above methods, TemporalAdjusters also contains a generic method ``ofD
 
 Formatting & parsing
 --------------------
-Formatting and parsing are must required features of date time API that does the convertion between string and date. In the begining we saw one of the major issue with the old DateFormat class is the thread safety. The Date Time API has introduced a new package `java.time` to support parsing and formatting with new thread safe date time classes. This package has two basic classes `DateTimeFormatter <https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html>`_ and `DateTimeFormatterBuilder <https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatterBuilder.html>`_ where most of the time we will be using DateTimeFormatter class.
+Formatting and parsing are must required features of date time API that does the convertion between string and date. In the begining we saw one of the major issue with the old DateFormat class is the thread safety. The Date Time API has introduced a new package `java.time.format` to support parsing and formatting with new thread safe date time classes. This package has two basic classes `DateTimeFormatter <https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html>`_ and `DateTimeFormatterBuilder <https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatterBuilder.html>`_ where most of the time we will be using DateTimeFormatter class.
 
 **DateTimeFormatter:**
 This class is the replacement for java.text.DateFormat which provides two main methods; format(temporal) to convert temporal object to string and parse(string) to create a temporal object from the given date string. Creating DateTimeFormatter instance is easy, it provides overloaded ``ofPatttern`` methods to create it instances.
@@ -454,7 +457,7 @@ One of the confusing aspects of date time is working with time zones. Till Java 
   ZoneId zone = ZoneId.of("Asia/Kolkata");
   ZoneOffset zone2 = ZoneOffset.of("+05:30");
   
- ZoneId consists of ZoneRules that defines rules for that time zoneIt is not recommended to use ZoneOffset as they don't contain daylight saving details if a country or city supporting it. ZoneId class also provides a method ``ZoneId.getAvailableZoneIds()`` that returns all available time zones. These time zones are usually supplied by ZoneRulesProvider class. You can register your own time zones by registering a custom provider.
+ ZoneId consists of ZoneRules that defines rules for that time zone. It is not recommended to use ZoneOffset as they don't contain daylight saving details if a country or city supporting it. ZoneId class also provides a method ``ZoneId.getAvailableZoneIds()`` that returns all available time zones. These time zones are usually supplied by ZoneRulesProvider class. You can register your own time zones by registering a custom provider.
  
  .. code:: java
  
@@ -498,7 +501,7 @@ One of the confusing aspects of date time is working with time zones. Till Java 
    ZonedDateTime z32 = ZonedDateTime.ofInstant(instant, zone);
 
 **OffsetDateTime**
- As we saw time zones are also represented by an offset value from UTC, OffsetDateTime represents an object with date/time information and an offset, for example, 2014-12-03T11:30-06:00. Instant, OffsetDateTime and ZonedDateTime are very much looks similar but there are key differences exists. Instance represents a point in time in UTC on a continuous time line, OffsetDateTime maintains time zone with an offset compared to UTC and ZonedDateTime contains time zone information along with Day-Light-saving rules. It is always better to use ZonedDateTime or Instant for simple usages. As like other temporal instances, this also has standard method patterns to create its instances.
+ As we saw time zones are also represented by an offset value from UTC, OffsetDateTime represents an object with date/time information and an offset, for example, 2014-12-03T11:30-06:00. Instant, OffsetDateTime and ZonedDateTime are very much looks similar but there are key differences exists. Instant represents a point in time in UTC on a continuous time line, OffsetDateTime maintains time zone with an offset compared to UTC and ZonedDateTime contains time zone information along with Day-Light-saving rules. It is always better to use ZonedDateTime or Instant for simple usages. As like other temporal instances, this also has standard method patterns to create its instances.
  
  .. code:: java
  

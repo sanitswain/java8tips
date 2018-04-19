@@ -1,6 +1,6 @@
 Predefined Collectors
 =====================
-In the previous chapter you got an overal idea on how does collector works and how to implement custom collectors. Java-8 has introduced ``java.util.stream.Collectors`` class containing many factory methods that provides most commonly used ``Collector`` implementations. Collectors mainly offers following functionalities:
+In the previous chapter you got an overal idea on how does collector works and how to implement custom collectors. Java-8 has introduced ``java.util.stream.Collectors`` utility class containing many factory methods that provides most commonly used ``Collector`` implementations. These collectors mainly offers following functionalities:
 
 - Collecting elements to a `java.util.Collection`
 - Joining String elements to a single String
@@ -68,12 +68,12 @@ Collecting stream elements to a `java.util.Collection` is the most widely used o
     .. code:: java
 
       Map<String, Integer> result = Stream.of("java", ".net", "python", "jAvA")
-            .collect(Collectors.toMap(String::toUpperCase, String::length, (key1, key2) -> key1));
+            .collect(Collectors.toMap(String::toUpperCase, String::length, (value1, value2) -> value1));
 
       Output: {JAVA=4, .NET=4, PYTHON=6}	
 	
 	
-    Here we are passing a merge function that says "consider the first key if two keys are duplicates". You can also provide some other merge function that will generate a composite key using both keys. The first two ``toMap`` methods will use `HashMap` as the accumulator container. Collectors has also a 4-arg overloaded toMap method that takes a supplier to define the `Map` type will be used for accumulation. 
+    Here we are passing a merge function that says "consider the value of first key if two keys are duplicates". You can also provide some other merge function that will generate a composite key using both keys. The first two ``toMap`` methods will use `HashMap` as the accumulator container. Collectors has also a 4-args overloaded toMap method that takes a supplier to define the `Map` container type will be used for accumulation. 
 	
     ``toMap(Function<T, K> km, Function<T, U> vm, BinaryOperator<U> mf, Supplier<M> mapSupplier)``
 	
@@ -100,7 +100,7 @@ The default delimiter for the no argument ``joining`` method is an empty string.
 
 Grouping elements
 -----------------
-A common database operation is to group records based on one or multiple columns similarly Collectors also provide factory method that accepts a classification function and returns a Collector implementing a "group by" operation on stream elements T.
+A common database operation is to group records based on single or multiple columns similarly Collectors also provide factory method that accepts a classification function and returns a Collector implementing a "group by" operation on stream of elements T.
 
 The classification function derives grouping keys of type K from stream elements. The collector produces a Map<K, List<T>> whose keys are the values resulting from applying the classification function to the input elements, and values are Lists containing the input elements which map to the associated key under the classification function.
 
@@ -169,7 +169,7 @@ Below example is grouping trade deals according to region and currency. The end 
        APAC={SGD=[T1002, T1005], INR=[T1009]}
     }
 
-There is no limit on grouping, you can call nested grouping any times you want. Now let's look into the ``groupingBy`` method signature once again. Does this method only meant for multi-level grouping? No. The method accepts a ``Collector`` as a second argument and we can do much more by passing different Collector implementations. Below example demonstrates counting number of deals in each region.
+There is no limit on grouping, you can call nested grouping any number of times you want. Now let's look into the ``groupingBy`` method signature once again. Does this method only meant for multi-level grouping? No. The method accepts a ``Collector`` as a second argument and we can do much more by passing different Collector implementations. Below example demonstrates counting number of deals in each region.
 
 .. code:: java
 
@@ -183,12 +183,12 @@ There is no limit on grouping, you can call nested grouping any times you want. 
 Just like `toCollection` method we saw in the begining, this method also facilitates to pass a map factory to decide the group container type. The default map object type is ``Hashmap`` so you can use this method if some other map type required.
 
 	
-.. seealso:: All these grouping collectors doesn't no guarantee on the thread-safety of the Map returned, so check ``Collectors.groupingByConcurrent`` methods for thread-safety operations.
+.. seealso:: All these grouping collectors doesn't guarantee on the thread-safety of the Map returned, so check ``Collectors.groupingByConcurrent`` methods for thread-safety operations. It internally uses ConcurrentMap implementation to deal with thread safety.
 	
 	
 Partitioning elements
 ---------------------
-Partitioning a special type of grouping but it will always contain two groups: FALSE and TRUE. It returns a Collector which partitions the input elements according to a Predicate supplied, and organizes them into a Map<Boolean, List<T>>. Following example shows partitioning deals to USD and no USD deals.
+Partitioning a special type of grouping but it will always contain two groups: FALSE and TRUE. It returns a Collector which partitions the input elements according to a given Predicate and organizes them into a Map<Boolean, List<T>>. Following example shows partitioning deals to USD and no USD deals.
 
 .. code:: java
 
@@ -299,7 +299,7 @@ We saw `grouping` and `partitioning` functions that accepts another downstream c
 
 2. **mapping(Function<T,U> mapper, Collector<U, A, R> downstream)**
 
-  ``collectingAndThen()`` resulting collector first collect elements and then applies the transformation function but the ``mapping`` collector applies the function before collecting elements. It returns a collector which applies the mapping function to the input elements and provides the mapped results to the downstream collector. As like `collectingAndThen`, the mapping() collectors are most useful when used in a multi-level reduction, such as downstream of a groupingBy or partitioningBy. For example, accumulate the set of trade ids in each region.
+  ``collectingAndThen()`` resulting collector first collect elements and then applies the transformation function but the ``mapping`` collector applies the mapper function before collecting elements. It returns a collector which applies the mapping function to the input elements and provides the mapped results to the downstream collector. As like `collectingAndThen`, the mapping() collectors are most useful when used in a multi-level reduction, such as downstream of a groupingBy or partitioningBy. For example, accumulate the set of trade ids in each region.
   
   .. code:: java
   

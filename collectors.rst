@@ -13,7 +13,7 @@ Collector divides the complete reduction process to four sub-tasks that best fit
 #. supplying a new empty result container at the begining
 #. accumulating new data element into the result container
 #. combining two result containers into one in case of parallelization
-#. performing an optional final transform on the container
+#. performing an optional final transformation on the container
 
 All of these sub-tasks may or may not be needed for every operation but these are the generalized form of the complete process. Collectors also have a set of characteristics, such as ``Characteristics.CONCURRENT``, that provide hints to the reduction process to provide better performance. `Collector.Characteristics` enum contains three characteristics as:
 
@@ -51,7 +51,7 @@ Let's discuss the methods declared by the collctor interface:
     Accumulator will define the behaviour of the accumulation process. You might be already noticed that, though it is ``BiConsumer`` it takes partial result container and a new element as inputs and performs the configured task.
 
 - **BinaryOperator<A> combiner()**
-    Combiner defines what to be done if two partial results are provided. As we know in the parallelization case, the complete dataset will be splitted to multiple chunks and performed separately, so combiner will  merge the two partial results into one. The ``BinaryOperator's`` functional decsriptor is exactly matching with this task: (partial1, partial2) -> partial1.merge(partial2)
+    Combiner defines what to be done if two partial results are provided. As we know in the parallelization case, the complete dataset will be splitted to multiple chunks and performed separately, so combiner will  merge the two partial results into one. The ``BinaryOperator's`` functional descriptor is exactly matching with this task: (partial1, partial2) -> partial1.merge(partial2)
 
 - **Function<A, R> finisher()**
     This defines the final transformation to be done to the result container after all the elements are processed.
@@ -122,7 +122,7 @@ Now we have enough idea on what are the methods collector interface provides and
     </employees>
 
 
-In this example we created a separate ToXMLCollector class by overriding all of the collector methods but ``Collector`` interface also has ``Collector.of`` static methods that accepts the collector behaviors and returns a anonymous Collector instance.
+In this example we created a separate ToXMLCollector class by overriding all of the collector methods but ``Collector`` interface also has ``Collector.of`` utility method that accepts the collector behaviors and returns a anonymous Collector instance.
 
 
 - Collector<T, A, R> of(Supplier<A> supplier, BiConsumer<A, T> accumulator, 

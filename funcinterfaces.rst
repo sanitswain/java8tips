@@ -6,9 +6,9 @@
 
 Functional Interfaces
 =====================
-In java 8 context, `functional interface` is an interface having exactly one abstract method called `functional method` to which the lambda expression's parameter and return types are matched. Functional interface provides target types for lambda expressions and method references.
+In java 8 context, `functional interface` is special form of interface having exactly one abstract method called `functional method` to which the lambda expression's parameter and return types are matched. Functional interface provides target types for lambda expressions and method references.
 
-The `java.util.function <http://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html>`_ contains general purpose functional interfaces used by JDK and also available for end users like us. While they are not the complete set of funtional interfaces to which lambda expressions might be applicable, but they provide enough to cover common requirements. You are free to create your own functional interfaces whenever existing set are not enough.
+The `java.util.function <http://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html>`_ contains various general purpose functional interfaces used by JDK and also available for then end users like us. While they are not the complete set of funtional interfaces to which lambda expressions might be applicable, but they provide enough to cover common requirements. You are free to create your own functional interfaces whenever existing set are not enough.
 
 The interfaces defined in the this package are annotated with `FunctionalInterface <http://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html>`_. This annotation is not the requirement for the java compiler to determine the interface is an `functional interface` but it helps the compiler to identify the accidental violation of the design intent. Basically I would say this annotation will be very much useful for us while creating our custom functional interfaces. 
 
@@ -70,23 +70,23 @@ Example:
     public class PredicateTest {
 
         public static void main(String[] args) {
-            Predicate<Integer> oddNums = (num -> num % 2 == 0);
-            Predicate<Integer> positiveNums = (num -> num > 0);
+		   Predicate<Integer> oddNums = (num -> num % 2 == 0);
+		   Predicate<Integer> positiveNums = (num -> num > 0);
 
-            Integer[] array = IntStream.rangeClosed(-10, 10).boxed().toArray(Integer[]::new);
+		   int[] array = { 5, 4, 8, -3, -4, 10 };
 
-            filter(array, oddNums);
-            filter(array, positiveNums);
-        }
+		   filter(array, oddNums);
+		   filter(array, positiveNums);
+	    }
 
-        public static <T> List<T> filter(T[] array, Predicate<T> predicate) {
-            List<T> result = new ArrayList<>();
-            for (T t : array) {
-                if (predicate.test(t))
-                    result.add(t);
-            }
-            return result;
-        }
+	    public static List<Integer> filter(int[] array, Predicate<Integer> predicate) {
+		   List<Integer> result = new ArrayList<>();
+		   for (int t : array) {
+			  if (predicate.test(t))
+				result.add(t);
+		   }
+		   return result;
+	    }
     }
 
 Here if you see `filter` method accepts a Predicate which is calling its test() method to extract the desired result. Later if you want find all primary numbers then you prepare another predicate and pass it to filter method.
@@ -139,9 +139,9 @@ Consumer<T>
             Consumer<Employee> printOnConsole = (e -> System.out.print(e));
             Consumer<Employee> storeInDB = (e -> DaoUtil.save(e));
 			
-			forEach(empList, printOnConsole);
-			forEach(empList, storeInDB);
-			forEach(empList, printOnConsole.andThen(storeInDB));
+            forEach(empList, printOnConsole);
+            forEach(empList, storeInDB);
+            forEach(empList, printOnConsole.andThen(storeInDB));
         }
 
         static <T> void forEach(List<T> list, Consumer<T> consumer) {
@@ -182,18 +182,18 @@ A usecase of `Function` can be extracting employee name from Employee class or d
 
         public static void main(String[] args) {
             Function<Employee, String> empPrimaryId = (emp -> emp.getEmployeeId());
-            Function<Department, String> deptPrimaryId = (dept -> dept.getLocationCode() + dept.getName());
+            Function<Department, String> deptPrimaryId = (dept -> dept.getLocation() + dept.getName());
 
             toMap(employeeList, empPrimaryId);
             toMap(deptList, deptPrimaryId);
         }
 
-        static <T, R> Map<T, R> toMap(List<T> list, Function<T, R> func) {
-            Map<T, R> result = new HashMap<>();
+        static <T, K> Map<K, T> toMap(List<T> list, Function<T, K> keyMapper) {
+            Map<K, T> map = new HashMap<>();
             for (T t : list) {
-                result.put(t, func.apply(t));
+                map.put(keyMapper.apply(t), t);
             }
-            return result;
+            return map;
         }
     }
 
@@ -296,7 +296,7 @@ A simple usecase of Supplier can be generating unique numbers using various algo
     }
 
 
-There is another variant of functional interfaces that starts with **Bi**: BiConsumer, BiFunction, BiPredicate etc which accept two input arguments of same or different reference types. These are helper interfaces used when working with tasks expecting two input arguments as an example ``list.add(element)``. There is no functional interfaces which accepts more than two input parameters, but still you can deal with such problems by wrapping all inputs to a single container.
+There is another variant of functional interfaces that prefixed with **Bi**: BiConsumer, BiFunction, BiPredicate etc which accept two input arguments of same or different reference types. These are helper interfaces used when working with tasks expecting two input arguments as an example ``list.add(element)``. There is no functional interfaces which accepts more than two input parameters, but still you can deal with such problems by wrapping all inputs to a single container or creating your own functional interface.
 
 .. hint:: Suppose you want to replace a CharSequence with another CharSequence within a string. Here you have three input parameters: `original string, search string, replace string`. So you can write them in following ways.
 
@@ -314,14 +314,15 @@ We visited couple of functional interfaces which are defined as generic types. G
 
         public static void main(String[] args) {
             int[] arr = IntStream.range(1, 50000).toArray();
-            BinaryOperator<Integer> f1 = (i1, i2) -> i1 + i2;
-            IntBinaryOperator f2 = (i1, i2) -> i1 + i2;
+            BinaryOperator<Integer> f1 = (i, j) -> i + j;
+            IntBinaryOperator f2 = (i, j) -> i + j;
 
-            RunningTime.calculate((Consumer<Void>) v -> reduce1(arr, f1));
-            RunningTime.calculate((Consumer<Void>) v -> reduce2(arr, f2));
+            // RunningTime is an utility class to calculate execution time
+            RunningTime.calculate((Consumer<Void>) v -> reduceWrapper(arr, f1));
+            RunningTime.calculate((Consumer<Void>) v -> reducePrimitive(arr, f2));
     	}
 
-        static int reduce1(int[] arr, BinaryOperator<Integer> operator) {  
+        static int reduceWrapper(int[] arr, BinaryOperator<Integer> operator) {  
             int result = arr[0];
             for (int i = 1; i < arr.length; i++) {
                 result = operator.apply(result, arr[i]);  // Boxing and Unboxing here
@@ -329,7 +330,7 @@ We visited couple of functional interfaces which are defined as generic types. G
             return result;
     	}
 
-        static int reduce2(int[] arr, IntBinaryOperator operator) {
+        static int reducePrimitive(int[] arr, IntBinaryOperator operator) {
             int result = arr[0];
             for (int i = 1; i < arr.length; i++) {
                 result = operator.applyAsInt(result, arr[i]);
@@ -339,16 +340,16 @@ We visited couple of functional interfaces which are defined as generic types. G
     }
 
     Output:
-    reduce1() execution time: 0.006 secs
-    reduce2() execution time: 0.002 secs
+    reduceWrapper() execution time: 0.006 secs
+    reducePrimitive() execution time: 0.002 secs
 
-In the above example `reduce` methods calculating sum of a given array of numbers and output section shows their running times. ``reduce2()`` is 3 times faster than ``reduce1()`` method because it uses ``IntBinaryOperator`` which avoids unnecessary boxing and unboxing operations.
+In the above example `reduceWrapper` methods calculating sum of a given array of numbers and output section shows their running times. ``reducePrimitive()`` is 3 times faster than ``reduceWrapper()`` method because it uses ``IntBinaryOperator`` which avoids unnecessary boxing and unboxing operations.
 
-Java8 brings a bundle of primitive functional interfaces that deals with only three primitive types i.e. int, long and double. Basically it follows a naming conventions to identify as them:
+Java8 shiped with bundle of primitive functional interfaces that deals with only three primitive types i.e. int, long and double. Basically it follows a naming conventions to identify as them:
 
 - **XXX:** Examples are IntPredicate, IntFunction, DoubleFunction, LongFunction etc. They accept primitive inputs and returns reference type results.
 - **ToXXX:** Examples are ToLongFunction, ToIntFunction etc. They accept reference type as input and returns primitive types.
-- **XXXToYYY:** IntToDoubleFunction, DoubleToLongFunction are some examples of this. They accept primitive type and also return primitive types.
+- **XXXToYYY:** IntToDoubleFunction, DoubleToLongFunction are some examples of this. They accept one primitive type and returns another primitive types.
 
 
 .. note:: There are little caveats in above rules:
@@ -365,11 +366,11 @@ We have learnt enough to build lambda expressions to create anonymous methods. Y
 - Function<String, Integer> func = str -> str.length();
 - Supplier<Address> sup = () -> emp.getAddress();
 
-Though java8 talks about removing boiler-plate codes, there is an efficient way called `method references` to build these lambdas which will be more clear and readable. If we rewrite above two lambda expressions using method reference technique then the representations will be ``String::length`` and ``emp::getAddress``. These representation clearly says we are trying to call length method of a string in first case and getAddess in the second.
+Though java8 talks about removing boiler-plate codes, there is an efficient way called `method references` to build these lambdas which will be more clear and readable. If we rewrite above two lambda expressions using method reference technique then the representations will be ``String::length`` and ``emp::getAddress``. These representation clearly says we are trying to call length method of a string in first case and getAddess of Employee class in the second.
 
 **Syntax**: <target reference> **::** <method name>
 
-Above is the syntax for creating method references where the target reference will be placed before the delimeter **::** and then the name of method. There are three kinds of method references exists.
+Above is the syntax for creating method references where the target reference will be placed before the delimeter **::** and then the name of method. There are three different cases where method references can be applied.
 
 - Reference to static method:
     ``Consumer<List<Integer>> c = Collections::sort;`` is an example of method reference for static methods. Compiler will automatically consider it as ``(list) -> Collections.sort(list)``. Here the target type will be the class name that contains the static method.
