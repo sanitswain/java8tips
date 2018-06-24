@@ -59,7 +59,7 @@ No doubt that code will run without any issues but it still has following proble
 - Repeated low levels codes such as ``if`` conditions.
 - Maintainability will be difficult as nesting levels goes on.
 
-Java8 has introduced ``java.util.Optional`` class to deal with such problems and additionally provides some utility methods that can be used in certain common scnearios. `Optional` is a container or a wrapper class that represents value might or might not exist for a variable. When value present you can use ``get`` method to fetch the value or on absent it just behaves as an empty container. We get exception when we directly operate on the null instances so Optional promotes to use its utility methods to perform operations. With keeping things in mind we can reimplement the original 'Candidate' model class given below.
+To overcome these issues you might have used `Null Object Design Pattern <https://www.tutorialspoint.com/design_pattern/null_object_pattern.htm>`_. Java8 has also introduced ``java.util.Optional`` class to deal with such problems and additionally provides some utility methods that can be used in certain common scnearios. `Optional` is a container or a wrapper class that represents value might or might not exist for a variable. When value present you can use ``get`` method to fetch the value or on absent it just behaves as an empty container. We get exception when we directly operate on the null instances so Optional promotes to use its utility methods to perform operations. With keeping things in mind we can reimplement the original 'Candidate' model class given below.
 
 .. code:: java
 
@@ -97,7 +97,7 @@ Creating optional objects are damn easy, it provides following factory methods t
 
 - **Empty Optional:**
 
- ``Optional.empty()`` gets you an hold of empty optional object. The default values for the nullable members of an object can be of this type which passed to some other code won't through NullPointerException and will supress any operation performed on it. Even though ``Option.empty() == Option.empty()`` returns true, Optional promotos to use ``isPresent`` method to perform the equility operation.
+ ``Optional.empty()`` gets you an hold of empty optional object. The default values for the nullable members of an object can be of this type which passed to some other code won't throw NullPointerException and will supress any operation performed on it. Even though ``Option.empty() == Option.empty()`` returns true, Optional promotos to use ``isPresent`` method to perform the equility operation.
 
  ``Optional<Job> optJob = Optional.empty();``
 
@@ -119,7 +119,7 @@ Creating optional objects are damn easy, it provides following factory methods t
  There is no other difference in using ``Optional.of`` or ``Optional.ofNullable`` except `of()` methods creates the perception that given value is mandatory field and passing null is the unaccepted criteria.
 
  
- .. note:: Most of languages has concept of missing values and they handle it in different ways. Scala has a safe way to navigate through values, Google's Guava library and Groovy language has same construct as Java Optional, so we can say java Optional can be inspired from them.
+ .. note:: Most of languages has concept of missing values and they handle it in different ways. Scala has a safe way to navigate through values, Google's Guava library and Groovy language has same construct as Java Optional, so you can assume java Optional is inspired from them.
 
  
 Operating on Optionals

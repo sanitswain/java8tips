@@ -84,7 +84,7 @@ If you compile above code in JDK 1.7, then the statement-1 will be compiled succ
 | public boolean addAll(Collection<? extends E> c)  | 
 +---------------------------------------------------+ 
 
-The asList() is a type safe method which is able to infer its return type based on the given direct target type but in addAll() case, compiler didn't have idea to deduce the type when applied on method parameter as target type and asList() method returned List<Object> that is incompatible with List<String> reference. Java 8 has enhanced this `type inferencing` technique to deal with such wiered scenarios. Now let's see how type inferencing works in lambda expressions.
+The asList() is a type safe method which is able to infer its return type based on the given direct target type but in addAll() case, compiler didn't have idea to deduce the type when applied on method parameter as target type and asList() method returned List<Object> that is incompatible with List<String> reference. Java 8 has enhanced this `type inferencing` technique to deal with such wierd scenarios. Now let's see how type inferencing works in lambda expressions.
 
 The type of lambda is deduced from the context where it is used. If we take our earlier example of Runnable and Callable, the signature of lambda expression matches with the singature of run() and call() methods. Runnable class run() method neither accept any argument nor return anything. Our lambda expression ``() -> "I love Lambdas".length()`` also doesn't supply any parameter.
 

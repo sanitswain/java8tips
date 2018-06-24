@@ -226,9 +226,9 @@ Collectors also has some of methods that returns collector to perform arithmetic
    * - Collector<T, ?, Optional<T>> minBy(Comparator<T> comparator)
    * - Collector<T, ?, Optional<T>> maxBy(Comparator<T> comparator)
    * - Collector<T, ?, XXX> summingXXX(ToXXXFunction<T> mapper)
-   * - Collector<T, ?, XXX> averagingXXX(ToXXXFunction<T> mapper)
+   * - Collector<T, ?, Double> averagingXXX(ToXXXFunction<T> mapper)
   
-I don't have to explain what these method do, they are self explanatory. Collectors has individual ``summing`` and ``averaging`` methods for these three primitive types: int, double and long. As like reduction operations, arithmetic fuctions are also available in IntStream, DoubleStream and LongStream interfaces that can be used for simple stream reduction. These arithmetic collectors will be helpful for nested reduction operations through other collectors.
+You don't need me to explain what these method do as they are self explanatory. Collectors has individual ``summing`` and ``averaging`` methods for these three primitive types: int, double and long. As like reduction operations, arithmetic fuctions are also available in IntStream, DoubleStream and LongStream interfaces that can be used for simple stream reduction. These arithmetic collectors will be helpful for nested reduction operations through other collectors.
 
 Apart from individual arithmetic operations, Collectors has also ``summarizingXXX`` factory methods that will perform all of these arithmetic operations all togather. The collector produced by summerizing function will return ``XXXSummaryStatistics`` class which is a container for holding results calculated for these arithmetic operations.
 
@@ -260,7 +260,7 @@ The `summarizingDouble` method accepts a ``ToDoubleFunction`` that will apply on
 
 Miscellaneous
 -------------
-We saw `grouping` and `partitioning` functions that accepts another downstream collector used for nesting operations. Collectors class also provides two additional methods mostly used for such nested complex situations.
+We saw `grouping` and `partitioning` functions that accepts another downstream collector used for nesting operations. Collectors utility also provides two additional methods mostly used for such nested complex situations.
 
 .. list-table::
 
