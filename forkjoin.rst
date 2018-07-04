@@ -6,7 +6,7 @@ In the begining of the tutorial we said- parallelization is almost free, with a 
 - Process all sub tasks independently
 - Join the partial results from each sub task
 
-ForkJoinPool internally does all these steps for you. We will typically submit a single task to ForkJoinPool and awaits its completion. The ForkJoinPool and the task itself work togather to divide and conquer the problem. Any problems that can be recursively divided and executed independently can be a candidature for Fork-Join.
+ForkJoinPool internally does all these steps for you. We will typically submit a single task to ForkJoinPool and awaits its completion. The ForkJoinPool and the task itself work together to divide and conquer the problem. Any problems that can be recursively divided and executed independently can be a candidature for Fork-Join.
 
 
 ForkJoinPool creation
