@@ -10,7 +10,7 @@ In java 8 context, `functional interface` is special form of interface having ex
 
 The `java.util.function <http://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html>`_ contains various general purpose functional interfaces used by JDK and also available for then end users like us. While they are not the complete set of funtional interfaces to which lambda expressions might be applicable, but they provide enough to cover common requirements. You are free to create your own functional interfaces whenever existing set are not enough.
 
-The interfaces defined in the this package are annotated with `FunctionalInterface <http://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html>`_. This annotation is not the requirement for the java compiler to determine the interface is an `functional interface` but it helps the compiler to identify the accidental violation of the design intent. Basically I would say this annotation will be very much useful for us while creating our custom functional interfaces. 
+The interfaces defined in the this package are annotated with `@FunctionalInterface <http://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html>`_. This annotation is not the requirement for the java compiler to determine the interface is an `functional interface` but it helps the compiler to identify the accidental violation of the design intent. Basically I would say this annotation will be very much useful for us while creating our custom functional interfaces. 
 
 
 @FunctionalInterface rules

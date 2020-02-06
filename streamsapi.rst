@@ -1,6 +1,6 @@
 Stream API
 ==========
-In the previous chapter you saw how streams are related to collections, various stream sources and kind of stream operations. In this chapter we will have an extensive look at various operations supported by stream API. `java.util.stream.Stream <http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html>`_ contains numerous methods that let you deal with complex data processing queries such as filtering, slicing, mapping, finding, matching and reducing both in sequential and parallel manner. There are also primitive specialization of streams used for primitive elements and contains additional operations `min, max, sum` etc.
+In the previous chapter we saw how streams are related to collections, various stream sources and kind of stream operations. In this chapter we will have an extensive look at various operations supported by stream API. `java.util.stream.Stream <http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html>`_ contains numerous methods that let you deal with complex data processing queries such as filtering, slicing, mapping, finding, matching and reducing both in sequential and parallel manner. There are also primitive specialization of streams used for primitive elements and contains additional operations `min, max, sum` etc.
 
 Filtering
 ---------
@@ -146,7 +146,7 @@ Stream Reduction
 ----------------
 Stream interface supports overloaded reduction operations that continuously combines elements of the stream until reduced to single output value.
 
-Suppose I asked you to calculate sum of array of numbers, then if i am not wrong your answer would be something like below.
+Suppose we need to calculate sum of array of numbers, then our code will look some what like below.
 
 .. code:: java
 
@@ -174,7 +174,7 @@ To generalize these kind of tasks Stream API has provided overloaded ``reduce`` 
 
 - **Optional<T> reduce(BinaryOperator<T> accumulator)**
 
-  This is almost equivalent to first reduction method except there is no initial value. Sometime you might be interested to perform some task in case stream has no elements rather than getting a default value. As an example if the ``reduce`` returns zero, then we are not sure that the sume is zero or it is the default value. Though there is no default value, its return type is an Optional object indicating result might be missing. You can use ``Optional.isPresent()`` to check presense of result.
+  This is almost equivalent to first reduction method except there is no initial value. Sometime you might be interested to perform some task in case stream has no elements rather than getting a default value. As an example if the ``reduce`` returns zero, then we are not sure that our sum is zero or it is the default value. Though there is no default value, its return type is an Optional object indicating result might be missing. You can use ``Optional.isPresent()`` to check presense of result.
 
   .. figure:: _static/reduce1.png
    :align: center

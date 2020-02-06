@@ -173,14 +173,18 @@ Optional provides three basic methods: `map, flatMap` and `filter` to perform an
         .flatMap(Framework::getCertification)
         .orElse(null);
  
- We saw map and flatMap methods in details, now I will show you a nice usage by combining both methods that will be used often. Imagine there is a external service which calculates the reimbursement amount.
+ We saw map and flatMap methods in details, now let's see a nice usage by combining both methods that will be used often. We have a service which calculates the reimbursement amount for the certification done.
  
  .. code:: java
  
-    double calculate(Optional<Framework> optFrm, Optional<Certification> optCert) {
-        return optFrm.flatMap(framwork -> 
-            optCert.map(certification -> reimburse(framwork, certification)))
+    double calculate(Optional<Framework> optFramework, Optional<Certification> optionalCert) {
+        return optFramework.flatMap(f -> 
+            optionalCert.map(c -> reimburse(f, c)))
             .get();
+    }
+	
+	Double reimburse(Framework f, Certification c) {
+        return null_condition? null: 200d;
     }
 	
  Here the map method is called inside flatMap just for the availability of framework value to invoke `reimburse`. Originally reimbursement will be executed by map method and flatMap will just return calculated result.

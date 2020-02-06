@@ -15,7 +15,7 @@ A `parallel` Stream is a stream that splits its elements into multiple chunks, p
   int[] array = {1, 2, 3, 4, 5};
   int sum = Arrays.stream(arr).parallel().sum();
 
-Similarly stream also has ``sequential()`` method that converts parallel stream into sequential stream. In reality stream class maintains an internal boolean state to identify the stream is a parallel stream. Due to this calling `parallel()` and `sequential()` methods multiple times on a stream will not throw any exception. In the below example the last call parallel() will win the priority.
+Similarly stream also has ``sequential()`` method that converts parallel stream into sequential stream. In reality stream class maintains an internal boolean state to identify the stream is a parallel stream. Due to this calling `parallel()` and `sequential()` methods multiple times on a stream will not throw any exception. In the below example the last call to parallel() wins the priority.
 
 ::
 
@@ -42,7 +42,7 @@ Here to the reduce method we are passing a BiFunction (2nd argument) which repre
 |                ArrayListSpliterator<>();
 		
 
-Parallelstream() calls ``spliterator()`` on the collection object which returns a Spliterator implementation that provides the logic of splitting a task. Every source or collection has their own spliterator implementations. Using these spliterators, parallel stream splits the task as long as possible and finally when the task becomes too small it executes it sequentially and merges partial results from all the sub tasks.
+Parallelstream() calls ``spliterator()`` on the collection object which returns a Spliterator implementation that provides the logic of splitting a task. Every source or collection has their own spliterator implementations. Using these spliterators, parallel stream splits the task as much as possible and finally when the task becomes too small executes it sequentially and merges partial results from all the sub tasks.
 	
 Spliterator
 -----------
@@ -62,7 +62,7 @@ Spliterator is the new interface introduced in jdk8 that traverses and partition
 - **tryAdvance** method is used to consume an element of the spliterator. This method returns either true indicating still more elements exist for processing otherwise false to signify all the elements of the spliterator is processed and can be exited.
 
 
-- **forEachRemaining** is a default method available in Spliterator interface that indicates the spliterator to take certain action when no more splitting require. Basically this performs the given action for each remaining element, sequentially in the current thread, until all elements have been processed.
+- **forEachRemaining** is a default method indicates spliterator to take certain action when no more splitting require. Basically this performs the given action for each remaining element, sequentially in the current thread, until all elements have been processed.
 
   .. code:: java
   
@@ -81,7 +81,7 @@ Spliterator is the new interface introduced in jdk8 that traverses and partition
 - **estimateSize** returns an estimate of the number of elements available in spliterator. Usually this method is called by some forkjoin tasks like `AbstractTask` to check size before calling trySplit.
 
 
-- **characteristics** method reports a set of characteristics of its structure, source, and elements from among ORDERED, DISTINCT, SORTED, SIZED, NONNULL, IMMUTABLE, CONCURRENT, and SUBSIZED. These helps the Spliterator clients to control, specialize or simplify computation. For example, a Spliterator for a Collection would report SIZED, a Spliterator for a Set would report DISTINCT, and a Spliterator for a SortedSet would also report SORTED.
+- **characteristics** method reports a set of characteristics of its structure, source, and elements among ORDERED, DISTINCT, SORTED, SIZED, NONNULL, IMMUTABLE, CONCURRENT, and SUBSIZED. These helps the Spliterator clients to control, specialize or simplify computation. For example, a Spliterator for a Collection would report SIZED, a Spliterator for a Set would report DISTINCT, and a Spliterator for a SortedSet would also report SORTED.
 
 You saw detailed descriptions on spliterator defined methods, now we will see a complete example that will deliver more context on how does they work.
 
@@ -143,7 +143,7 @@ You saw detailed descriptions on spliterator defined methods, now we will see a 
      }
   }
 
-The FindMaxSpliterator is trying to find out the largest element in an array. Every time `trySplit` method checks the remaining size of the elements in current spliterator and creates a second spliterator if size is more than 100. Once the elements size reaches under 1000, it calls `tryAdvance` method repeatedly on those 1000 (may be less) elements.
+The FindMaxSpliterator is trying to find out the largest element in an array. Every time `trySplit` method checks the remaining size of the elements in current spliterator and creates a second spliterator if size is more than 1000. Once the elements size reaches under 1000, it calls `tryAdvance` method repeatedly on those 1000 (may be less) elements.
 
 .. figure:: _static/parallel_proc_1.png
    :align: center

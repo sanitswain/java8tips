@@ -1,6 +1,6 @@
 ForkJoinPool
 ============
-In the begining of the tutorial we said- parallelization is almost free, with a small change you can enjoy the benifit of parallel stream processing. The complete parallel stream processing is based on ForkJoinPool concept. ForkJoinPool was delivered with jdk7 which provides a highly specialized ``ExecutorService``. If you can recall, we submit multiple indepenedent tasks to ExecutorService which are then executed by thread-pool threads. In case of parallel stream we don't have multiple tasks where as we have a single complex task of larger size. To execute this big task we have to perform following actions explicitly.
+At the start of the tutorial we discussed- parallelization is almost free, with a small change you can enjoy the benifit of parallel stream processing. The complete parallel stream processing is based on ForkJoinPool concept. ForkJoinPool was delivered with jdk7 which provides a highly specialized ``ExecutorService``. If you recall, we submit multiple indepenedent tasks to ExecutorService which are then executed by pool worker threads. In case of parallel stream we don't have multiple tasks but there is single complex task of larger size. To execute this big task we have to perform following actions explicitly.
 
 - Divide the big task into smaller sub tasks
 - Process all sub tasks independently
@@ -23,7 +23,7 @@ ForkJoinTask
 ------------
 As like Callable and Runnable in ThreadPoolExecutor, fork-join accepts a type of ``ForkJoinTask`` instance for the execution. The abstract base class ForkJoinTask is an implementation of ``java.util.concurrecnt.Future`` that provides common functionalities to its subclasses. It again offers two more abstract subclasses: `RecursiveAction` and `RecursiveTask` which has only one abstract method called "compute()". There is no difference between these two classes except ``RecursiveTask`` can return result where as ``RecursiveAction`` can not. You can assume RecursiveTask is an example of finding largest number from an array where as RecursiveAction is to sort an array which doesn't require to return any result.
 
-ForkJoinTask has large set of methods but the methods we will be using most of the time are: **fork(), compute(), join()**. The compute method will contain the original computational logic to be performed by the worker threads. The following is the pseudo code of the compute method.
+ForkJoinTask has large set of methods but the methods we will be using most of the time are: **fork(), compute(), join()**. The compute method will contain the actual computational logic to be performed by the worker threads. The following is the pseudo code of the compute method.
 
 ::
 
@@ -39,7 +39,7 @@ ForkJoinTask has large set of methods but the methods we will be using most of t
       first.join();
   }
 
-The idea behind the fork-join is to divide the task into multiple smaller chunks and execute them independently. The compute method is responsible to split the task if it is not small enough to execute. In the pseudo code we have split the task into two but it can be split into more also. When you call `fork` on the first task it will be pushed into the queue and may be executed by some other thread, then you call compute method on second. After the competion of second task we will call join on the first task to wait for its completion. Below is the complete example which demonstrates finding the largest element in an array.
+The idea behind the fork-join is to divide the task into smaller chunks and execute them independently. The compute method is responsible to split the task if it is not small enough to execute. In the pseudo code we have split the task into two but it can be split into more also. When you call `fork` on the first task it will be pushed into the queue and may be executed by some other thread, then you call compute method on second. After the completion of second task we will call join on the first task to wait for its completion. Below is a complete example that demonstrates finding the largest element in an array.
 
 .. code-block:: java
   :linenos:
@@ -90,7 +90,7 @@ The idea behind the fork-join is to divide the task into multiple smaller chunks
      }
   }
 
-Here rather than calling `fork, compute` and `join` separately, we used ``invokeAll`` method which internally performs the same. There is no rule to define what is the size of the smaller chunk task, but the task should not be very small that it will loose the benifit of parallelism.
+Here rather than calling `fork, compute` and `join` separately, we used ``invokeAll`` method which internally performs the same. There is no rule to define what is the size of the smaller chunk task, but the task should not be very small such that it will loose benifits of parallelism.
 
 
 How fork-join works?
@@ -104,7 +104,7 @@ ForkJoinPool has array of DEqueues (WorkerQueue) which will be shared by all the
    
    **Internals of ForkJoinPool**
 
-Initially , only a single thread in a ForkJoinPool will be busy when you submit a task. The thread will begin to subdivide the larger task into smaller tasks. Each time a task is divided into two or more tasks, we fork the every new subtask except the last one we compute. After the computation we invoke join to wait for the forked tasks to complete. This divide-and-conquer process continues untill all the tasks are executed, and all the queues become empty. More generally this work stealing algorithm is used to redistribute and balance the tasks among the worker threads in the pool. Below figure shows how this process occurs.
+Initially , only a single thread in a ForkJoinPool will be busy when you submit a task. The thread will begin to subdivide the larger task into smaller tasks. Each time a task is divided into two or more tasks, we fork the every new subtask except the last one we compute. After the computation we invoke join to wait for the forked tasks to complete. This divide-and-conquer process continues till all the tasks are executed, and all queues become empty. More generally this work stealing algorithm is used to redistribute and balance the tasks among the worker threads in the pool. Below figure shows how this process occurs.
 
 .. figure:: _static/forkjoin_2.png
    :align: center
