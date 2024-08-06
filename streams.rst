@@ -26,7 +26,7 @@ In this code snippet we just created a pipeline of tasks and java8 will prepare 
 
 Stream vs Collection
 --------------------
-Most of the time collections are one of the main source for stream to act on. Stream and collection are used togather, they don't replace each other. Streams differ from collection in several ways:
+Most of the time collections are one of the main source for stream to act on. Stream and collection are used together, they don't replace each other. Streams differ from collection in several ways:
 
 - **No storage:** Collections are typically physical set of data where as streams are a logial view that will be given to the pipeline of operations. Collections are about data and streams are about computations.
 
